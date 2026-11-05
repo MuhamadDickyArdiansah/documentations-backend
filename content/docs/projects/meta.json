@@ -1,0 +1,15 @@
+{
+  "title": "Backend Project References",
+  "icon": "FolderGit2",
+  "pages": [
+    "index",
+    "basic-express-api",
+    "authentication-api",
+    "authorization-api",
+    "crud-api",
+    "user-management-api",
+    "personal-finance-management-api",
+    "complete-backend-starter"
+  ],
+  "defaultOpen": false
+}

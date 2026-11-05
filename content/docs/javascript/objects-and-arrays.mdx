@@ -1,0 +1,105 @@
+---
+title: "Objects & Arrays"
+description: "Spread hanya menyalin satu tingkat."
+---
+
+## Overview
+
+Spread hanya menyalin satu tingkat. Gunakan map untuk transformasi, filter untuk seleksi, dan reduce untuk agregasi; jangan mengubah array input milik pemanggil tanpa kontrak yang jelas.
+
+## Concept
+
+Fokus penerapan **Objects & Arrays** adalah destructure field yang digunakan. Gunakan optional chaining untuk akses opsional. Pilih field response dengan allowlist. Contoh berikut memperlihatkan konteks kategori JavaScript & TypeScript; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Objects & Arrays pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Destructure field yang digunakan.
+2. Gunakan optional chaining untuk akses opsional.
+3. Pilih field response dengan allowlist.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="objects-and-arrays.mjs"
+const user = { id: "u1", email: "reader@example.com", passwordHash: "internal" };
+const { id, email } = user;
+const response = { id, email };
+console.assert(!("passwordHash" in response));
+```
+
+### Konteks kategori
+
+```js title="example.mjs"
+const notes = [{ id: 1, title: "Belajar backend", done: false }];
+const titles = notes.filter(note => !note.done).map(note => note.title);
+console.log(titles);
+```
+
+## Code Explanation
+
+Spread hanya menyalin satu tingkat. Gunakan map untuk transformasi, filter untuk seleksi, dan reduce untuk agregasi; jangan mengubah array input milik pemanggil tanpa kontrak yang jelas. Dalam implementasi nyata, gunakan optional chaining untuk akses opsional dan pilih field response dengan allowlist sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Objects & Arrays, verifikasi langkah “Destructure field yang digunakan” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Gunakan optional chaining untuk akses opsional.
+- Batasi hak akses dan data yang dikirim ke client.
+- Pilih field response dengan allowlist.
+
+## Testing
+
+Uji Objects & Arrays dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “destructure field yang digunakan” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Asynchronous Programming](/docs/javascript/asynchronous-programming)
+- [JavaScript & TypeScript overview](/docs/javascript)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [MDN Web Docs — JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)** — Sintaks, tipe data, fungsi, object, modules, dan asynchronous programming.
+- **Referensi dari [Microsoft TypeScript — Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)** — Sistem tipe, narrowing, interface, dan generic.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

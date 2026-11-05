@@ -1,0 +1,113 @@
+---
+title: "File Upload"
+description: "Upload besar sebaiknya mengalir sebagai stream atau langsung ke object storage dengan signed URL."
+---
+
+## Overview
+
+Upload besar sebaiknya mengalir sebagai stream atau langsung ke object storage dengan signed URL. Buffer seluruh file dapat menghabiskan memory server.
+
+## Concept
+
+Fokus penerapan **File Upload** adalah batasi ukuran. Generate storage key di server. Verifikasi ownership sebelum download. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan File Upload pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Batasi ukuran.
+2. Generate storage key di server.
+3. Verifikasi ownership sebelum download.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="file-upload.mjs"
+import { pipeline } from "node:stream/promises";
+import { createWriteStream } from "node:fs";
+import { randomUUID } from "node:crypto";
+export async function saveVerifiedStream(stream, directory) {
+  const key = randomUUID();
+  await pipeline(stream, createWriteStream(`${directory}/${key}`, { flags: "wx", mode: 0o600 }));
+  return key;
+}
+// directory dari server; parser harus lebih dulu membatasi size dan memverifikasi tipe.
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+Upload besar sebaiknya mengalir sebagai stream atau langsung ke object storage dengan signed URL. Buffer seluruh file dapat menghabiskan memory server. Dalam implementasi nyata, generate storage key di server dan verifikasi ownership sebelum download sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk File Upload, verifikasi langkah “Batasi ukuran” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Generate storage key di server.
+- Batasi hak akses dan data yang dikirim ke client.
+- Verifikasi ownership sebelum download.
+
+## Testing
+
+Uji File Upload dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “batasi ukuran” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Email Service](/docs/advanced/email-service)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html)** — Validasi file, pembatasan ukuran, dan storage aman.
+- **Referensi dari [Node.js — File System API](https://nodejs.org/api/fs.html)** — Operasi file, promises, dan penanganan error I/O.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

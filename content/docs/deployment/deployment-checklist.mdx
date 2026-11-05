@@ -1,0 +1,108 @@
+---
+title: "Deployment Checklist"
+description: "Checklist merangkum kondisi yang harus dipenuhi sebelum rilis."
+---
+
+## Overview
+
+Checklist merangkum kondisi yang harus dipenuhi sebelum rilis. Sebuah build sukses belum membuktikan migration aman, backup bisa dipulihkan, atau endpoint terlindungi.
+
+## Concept
+
+Fokus penerapan **Deployment Checklist** adalah verifikasi test dan dependency audit. Uji health dan smoke test. Siapkan rollback serta penanggung jawab. Contoh berikut memperlihatkan konteks kategori Deployment; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Deployment Checklist pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Verifikasi test dan dependency audit.
+2. Uji health dan smoke test.
+3. Siapkan rollback serta penanggung jawab.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```text title="deployment-checklist.text"
+[ ] Konfigurasi dan secret production valid
+[ ] Test, typecheck, dependency audit, dan build lulus
+[ ] Migration kompatibel dan backup dapat dipulihkan
+[ ] Health check dan smoke test berhasil
+[ ] Error rate dan latency dipantau
+[ ] Versi sebelumnya tersedia untuk rollback
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run build
+# Atur environment platform, lalu jalankan smoke test setelah deploy.
+```
+
+## Code Explanation
+
+Checklist merangkum kondisi yang harus dipenuhi sebelum rilis. Sebuah build sukses belum membuktikan migration aman, backup bisa dipulihkan, atau endpoint terlindungi. Dalam implementasi nyata, uji health dan smoke test dan siapkan rollback serta penanggung jawab sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Deployment Checklist, verifikasi langkah “Verifikasi test dan dependency audit” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Uji health dan smoke test.
+- Batasi hak akses dan data yang dikirim ke client.
+- Siapkan rollback serta penanggung jawab.
+
+## Testing
+
+Uji Deployment Checklist dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “verifikasi test dan dependency audit” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Environment Configuration](/docs/deployment/environment-configuration)
+- [Deployment overview](/docs/deployment)
+- [Docker Node.js Guide](https://docs.docker.com/guides/nodejs/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Docker — Node.js Guide](https://docs.docker.com/guides/nodejs/)** — Container image, development workflow, dan deployment aplikasi Node.
+- **Referensi dari [Express — Production Performance and Reliability](https://expressjs.com/en/advanced/best-practice-performance/)** — Operasi server, reliability, dan konfigurasi production.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

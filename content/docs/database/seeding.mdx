@@ -1,0 +1,109 @@
+---
+title: "Seeding"
+description: "Seed menciptakan data awal yang dapat diulang."
+---
+
+## Overview
+
+Seed menciptakan data awal yang dapat diulang. Seed production harus dibedakan dari fixture development agar akun contoh tidak muncul pada layanan nyata.
+
+## Concept
+
+Fokus penerapan **Seeding** adalah gunakan upsert. Hindari credential default. Buat seed idempotent. Contoh berikut memperlihatkan konteks kategori Database; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai PostgreSQL. Jalankan SQL pada database development melalui psql atau SQL editor.
+
+## Project Structure
+
+Simpan latihan Seeding pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan upsert.
+2. Hindari credential default.
+3. Buat seed idempotent.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```sql title="seeding.sql"
+INSERT INTO users (id, email)
+VALUES ('00000000-0000-4000-8000-000000000001', 'demo@example.com')
+ON CONFLICT (email) DO NOTHING;
+-- Seed development, bukan akun production.
+```
+
+### Konteks kategori
+
+```sql title="schema.sql"
+CREATE TABLE notes (
+  id uuid PRIMARY KEY,
+  owner_id uuid NOT NULL,
+  title varchar(200) NOT NULL CHECK (length(title) > 0),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX notes_owner_created_idx ON notes(owner_id, created_at DESC, id);
+```
+
+## Code Explanation
+
+Seed menciptakan data awal yang dapat diulang. Seed production harus dibedakan dari fixture development agar akun contoh tidak muncul pada layanan nyata. Dalam implementasi nyata, hindari credential default dan buat seed idempotent sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Seeding, verifikasi langkah “Gunakan upsert” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Hindari credential default.
+- Batasi hak akses dan data yang dikirim ke client.
+- Buat seed idempotent.
+
+## Testing
+
+Uji Seeding dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan upsert” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Transactions](/docs/database/transactions)
+- [Database overview](/docs/database)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/current/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [PostgreSQL — Official Documentation](https://www.postgresql.org/docs/current/)** — Model relasional, SQL, dan operasi database.
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

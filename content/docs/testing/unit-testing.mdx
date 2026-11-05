@@ -1,0 +1,108 @@
+---
+title: "Unit Testing"
+description: "Unit test memeriksa logika kecil tanpa database atau jaringan."
+---
+
+## Overview
+
+Unit test memeriksa logika kecil tanpa database atau jaringan. Inject dependensi agar perilaku gagal dapat diuji tanpa mocking seluruh module.
+
+## Concept
+
+Fokus penerapan **Unit Testing** adalah gunakan node:test. Uji edge case. Periksa output dan side effect yang memang menjadi kontrak. Contoh berikut memperlihatkan konteks kategori Testing; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Unit Testing pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan node:test.
+2. Uji edge case.
+3. Periksa output dan side effect yang memang menjadi kontrak.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="unit-testing.mjs"
+import test from "node:test";
+import assert from "node:assert/strict";
+const trim = value => value.trim();
+test("menormalisasi spasi", () => assert.equal(trim(" Note "), "Note"));
+```
+
+### Konteks kategori
+
+```js title="policy.test.mjs"
+import test from "node:test";
+import assert from "node:assert/strict";
+const canRead = (actor, resource) => actor.id === resource.ownerId;
+test("menolak akses lintas owner", () => {
+  assert.equal(canRead({ id: "u2" }, { ownerId: "u1" }), false);
+});
+```
+
+## Code Explanation
+
+Unit test memeriksa logika kecil tanpa database atau jaringan. Inject dependensi agar perilaku gagal dapat diuji tanpa mocking seluruh module. Dalam implementasi nyata, uji edge case dan periksa output dan side effect yang memang menjadi kontrak sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Unit Testing, verifikasi langkah “Gunakan node:test” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Uji edge case.
+- Batasi hak akses dan data yang dikirim ke client.
+- Periksa output dan side effect yang memang menjadi kontrak.
+
+## Testing
+
+Uji Unit Testing dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan node:test” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Integration Testing](/docs/testing/integration-testing)
+- [Testing overview](/docs/testing)
+- [Node.js Test Runner](https://nodejs.org/api/test.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Test Runner](https://nodejs.org/api/test.html)** — Unit test, subtest, mocking, dan coverage.
+- **Referensi dari [Node.js — HTTP API](https://nodejs.org/api/http.html)** — Request, response, server, dan batas koneksi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

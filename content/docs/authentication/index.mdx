@@ -1,0 +1,46 @@
+---
+title: "Authentication"
+description: "Pelajari Authentication melalui 17 topik yang terstruktur, dari konsep hingga praktik."
+icon: Fingerprint
+---
+
+## Tentang kategori ini
+
+Authentication membuktikan identitas, sedangkan authorization memutuskan izin. Credential harus diproses melalui TLS dan tidak boleh muncul dalam log atau URL.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="Authentication Fundamentals" href="/docs/authentication/authentication-fundamentals">Authentication membuktikan identitas, sedangkan authorization memutuskan izin.</Card>
+<Card title="Password Hashing" href="/docs/authentication/password-hashing">Password harus di-hash dengan algoritma adaptif dan salt acak.</Card>
+<Card title="User Registration" href="/docs/authentication/user-registration">Registrasi memvalidasi email dan password lalu membuat identitas unik.</Card>
+<Card title="User Login" href="/docs/authentication/user-login">Login memverifikasi hash dan menghasilkan sesi atau token.</Card>
+<Card title="JWT Authentication" href="/docs/authentication/jwt-authentication">JWT membawa klaim bertanda tangan; payload tidak terenkripsi.</Card>
+<Card title="Access Token" href="/docs/authentication/access-token">Access token memberi akses berumur pendek.</Card>
+<Card title="Refresh Token" href="/docs/authentication/refresh-token">Refresh token opaque disimpan client sebagai credential dan server menyimpan hash-nya.</Card>
+<Card title="Token Verification" href="/docs/authentication/token-verification">Membaca payload dengan decode tidak memverifikasi signature.</Card>
+<Card title="Token Revocation" href="/docs/authentication/token-revocation">JWT tidak otomatis dapat dicabut sebelum expiry.</Card>
+<Card title="Logout" href="/docs/authentication/logout">Logout mencabut sesi server dan menghapus credential client.</Card>
+<Card title="Cookie-Based Authentication" href="/docs/authentication/cookie-based-authentication">HttpOnly mengurangi akses JavaScript terhadap cookie tetapi browser masih mengirimkannya otomatis.</Card>
+<Card title="Session-Based Authentication" href="/docs/authentication/session-based-authentication">Session menyimpan state identitas pada server dan ID acak pada cookie.</Card>
+<Card title="Forgot Password" href="/docs/authentication/forgot-password">Alur lupa password harus memberikan response generik agar keberadaan email tidak terungkap.</Card>
+<Card title="Reset Password" href="/docs/authentication/reset-password">Reset memvalidasi token sekali pakai secara atomik, memperbarui hash password, dan mencabut sesi lama.</Card>
+<Card title="Email Verification" href="/docs/authentication/email-verification">Verifikasi email membuktikan akses pada inbox, bukan identitas legal pemiliknya.</Card>
+<Card title="OAuth / Google Login" href="/docs/authentication/oauth-google-login">Gunakan Authorization Code dengan PKCE, state, dan redirect URI yang tepat.</Card>
+<Card title="Multi-Factor Authentication" href="/docs/authentication/multi-factor-authentication">MFA menambah faktor independen selain password.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)** — Pengamanan login, credential, dan siklus identitas.
+- **Referensi dari [OWASP — Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)** — Penyimpanan sesi, expiry, cookie, serta pencabutan sesi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

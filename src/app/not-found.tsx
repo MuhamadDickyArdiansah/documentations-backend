@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function NotFound() { return <main id="main-content" className="not-found"><span className="eyebrow">404 / HALAMAN TIDAK DITEMUKAN</span><h1>Sepertinya kamu tersesat.</h1><p>Halaman ini tidak tersedia. Temukan materi yang kamu butuhkan melalui pencarian atau kembali ke dokumentasi.</p><Link className="button-primary" href="/">Kembali ke beranda →</Link></main>; }

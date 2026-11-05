@@ -1,0 +1,20 @@
+{
+  "title": "Database",
+  "icon": "Database",
+  "pages": [
+    "index",
+    "database-fundamentals",
+    "sql-and-nosql",
+    "postgresql",
+    "database-design",
+    "database-relationships",
+    "prisma-orm",
+    "prisma-schema",
+    "migrations",
+    "seeding",
+    "transactions",
+    "indexing",
+    "query-optimization"
+  ],
+  "defaultOpen": false
+}

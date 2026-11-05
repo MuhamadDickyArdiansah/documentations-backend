@@ -1,0 +1,111 @@
+---
+title: "File System"
+description: "API node:fs/promises mendukung operasi file tanpa memblokir thread utama."
+---
+
+## Overview
+
+API node:fs/promises mendukung operasi file tanpa memblokir thread utama. Input path dari user dapat menyebabkan path traversal jika tidak dibatasi pada direktori yang diizinkan.
+
+## Concept
+
+Fokus penerapan **File System** adalah gunakan path.resolve. Batasi direktori tujuan. Tangani ENOENT tanpa membocorkan absolute path. Contoh berikut memperlihatkan konteks kategori Node.js; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan File System pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan path.resolve.
+2. Batasi direktori tujuan.
+3. Tangani ENOENT tanpa membocorkan absolute path.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="file-system.mjs"
+import { readFile } from "node:fs/promises";
+try {
+  const content = await readFile(new URL("./config.json", import.meta.url), "utf8");
+  console.log(JSON.parse(content));
+} catch (error) {
+  if (error.code === "ENOENT") console.error("Config tidak tersedia");
+  else throw error;
+}
+```
+
+### Konteks kategori
+
+```js title="server.mjs"
+import { createServer } from "node:http";
+const server = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ data: { status: "ok" } }));
+});
+server.listen(4000, "127.0.0.1");
+```
+
+## Code Explanation
+
+API node:fs/promises mendukung operasi file tanpa memblokir thread utama. Input path dari user dapat menyebabkan path traversal jika tidak dibatasi pada direktori yang diizinkan. Dalam implementasi nyata, batasi direktori tujuan dan tangani enoent tanpa membocorkan absolute path sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk File System, verifikasi langkah “Gunakan path.resolve” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Batasi direktori tujuan.
+- Batasi hak akses dan data yang dikirim ke client.
+- Tangani ENOENT tanpa membocorkan absolute path.
+
+## Testing
+
+Uji File System dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan path.resolve” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [HTTP Module](/docs/nodejs/http-module)
+- [Node.js overview](/docs/nodejs)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — File System API](https://nodejs.org/api/fs.html)** — Operasi file, promises, dan penanganan error I/O.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

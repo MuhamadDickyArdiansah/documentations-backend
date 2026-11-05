@@ -1,0 +1,112 @@
+---
+title: "Idempotency"
+description: "Idempotency key menghubungkan retry ke satu hasil operasi."
+---
+
+## Overview
+
+Idempotency key menghubungkan retry ke satu hasil operasi. Penyimpanan key dan side effect harus atomik agar dua request bersamaan tidak memproses transaksi dua kali.
+
+## Concept
+
+Fokus penerapan **Idempotency** adalah scope key ke actor dan endpoint. Simpan hash request. Tolak key sama dengan payload berbeda. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Idempotency pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Scope key ke actor dan endpoint.
+2. Simpan hash request.
+3. Tolak key sama dengan payload berbeda.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```sql title="idempotency.sql"
+CREATE TABLE idempotency_keys (
+  actor_id uuid NOT NULL,
+  key text NOT NULL,
+  request_hash text NOT NULL,
+  response jsonb,
+  PRIMARY KEY (actor_id, key)
+);
+-- Insert key dan efek bisnis dalam transaksi yang sama.
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+Idempotency key menghubungkan retry ke satu hasil operasi. Penyimpanan key dan side effect harus atomik agar dua request bersamaan tidak memproses transaksi dua kali. Dalam implementasi nyata, simpan hash request dan tolak key sama dengan payload berbeda sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Idempotency, verifikasi langkah “Scope key ke actor dan endpoint” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Simpan hash request.
+- Batasi hak akses dan data yang dikirim ke client.
+- Tolak key sama dengan payload berbeda.
+
+## Testing
+
+Uji Idempotency dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “scope key ke actor dan endpoint” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [File Upload](/docs/advanced/file-upload)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Stripe — Idempotent Requests](https://docs.stripe.com/api/idempotent_requests)** — Key idempotency dan perilaku retry pada API.
+- **Referensi dari [PostgreSQL — Transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html)** — Atomic commit dan rollback pada operasi terkait.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,110 @@
+---
+title: "Notifications"
+description: "Notifikasi memisahkan event domain dari saluran pengiriman."
+---
+
+## Overview
+
+Notifikasi memisahkan event domain dari saluran pengiriman. Preferensi user dan deduplication menentukan apakah event perlu dikirim lewat email, push, atau in-app.
+
+## Concept
+
+Fokus penerapan **Notifications** adalah simpan status delivery. Hormati preferensi user. Gunakan event ID untuk deduplication. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Notifications pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Simpan status delivery.
+2. Hormati preferensi user.
+3. Gunakan event ID untuk deduplication.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="notifications.mjs"
+export function channelsFor(preferences, event) {
+  const result = ["in-app"];
+  if (preferences.email && event.priority === "high") result.push("email");
+  return result;
+}
+console.log(channelsFor({ email: false }, { priority: "high" })); // in-app
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+Notifikasi memisahkan event domain dari saluran pengiriman. Preferensi user dan deduplication menentukan apakah event perlu dikirim lewat email, push, atau in-app. Dalam implementasi nyata, hormati preferensi user dan gunakan event id untuk deduplication sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Notifications, verifikasi langkah “Simpan status delivery” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Hormati preferensi user.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan event ID untuk deduplication.
+
+## Testing
+
+Uji Notifications dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “simpan status delivery” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Webhooks](/docs/advanced/webhooks)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [IETF — RFC 8030: Generic Event Delivery Using HTTP Push](https://www.rfc-editor.org/rfc/rfc8030)** — Dasar protokol pengiriman push notification.
+- **Referensi dari [BullMQ — Official Documentation](https://docs.bullmq.io/)** — Queue, retry, jobs, dan pola background processing.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

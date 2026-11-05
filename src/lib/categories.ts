@@ -1,0 +1,17 @@
+export const categories = [
+  { slug: 'getting-started', title: 'Getting Started', description: 'Langkah pertama membangun backend. Siapkan tools dan pahami fondasinya.', icon: 'Compass', color: 'green', topics: 7, label: 'MULAI DI SINI' },
+  { slug: 'javascript', title: 'JavaScript & TypeScript', description: 'Kuasai bahasa di balik backend, dari fundamentals hingga type safety.', icon: 'CodeXml', color: 'yellow', topics: 13 },
+  { slug: 'nodejs', title: 'Node.js', description: 'Kenali runtime, event loop, dan ekosistem Node.js lebih dalam.', icon: 'Hexagon', color: 'green', topics: 9 },
+  { slug: 'express', title: 'Express.js', description: 'Bangun aplikasi terstruktur dengan routing, middleware, dan services.', icon: 'Route', color: 'gray', topics: 13 },
+  { slug: 'rest-api', title: 'REST API', description: 'Rancang API yang konsisten, mudah digunakan, dan scalable.', icon: 'Braces', color: 'blue', topics: 15 },
+  { slug: 'authentication', title: 'Authentication', description: 'Implementasikan login, JWT, refresh token, dan OAuth dengan aman.', icon: 'FingerprintPattern', color: 'purple', topics: 17 },
+  { slug: 'authorization', title: 'Authorization', description: 'Kelola akses dengan roles, permissions, dan resource ownership.', icon: 'ShieldCheck', color: 'orange', topics: 8 },
+  { slug: 'database', title: 'Database', description: 'Dari desain relasi hingga query optimal dengan PostgreSQL dan Prisma.', icon: 'Database', color: 'blue', topics: 12 },
+  { slug: 'crud', title: 'CRUD Operations', description: 'Implementasi operasi data yang tervalidasi, aman, dan reusable.', icon: 'Layers', color: 'purple', topics: 12 },
+  { slug: 'security', title: 'Security', description: 'Lindungi aplikasi dari ancaman umum dan terapkan praktik keamanan.', icon: 'LockKeyhole', color: 'red', topics: 12 },
+  { slug: 'advanced', title: 'Advanced Backend', description: 'Caching, background jobs, WebSockets, dan integrasi layanan.', icon: 'Workflow', color: 'orange', topics: 11 },
+  { slug: 'testing', title: 'Testing', description: 'Pastikan aplikasi bekerja dengan unit, integration, dan API testing.', icon: 'FlaskConical', color: 'green', topics: 7 },
+  { slug: 'architecture', title: 'Architecture & Practices', description: 'Tulis kode yang mudah dirawat dengan pola arsitektur yang tepat.', icon: 'Blocks', color: 'purple', topics: 11 },
+  { slug: 'deployment', title: 'Deployment', description: 'Bawa aplikasi ke production dengan Docker, CI/CD, dan monitoring.', icon: 'CloudUpload', color: 'blue', topics: 10 },
+  { slug: 'projects', title: 'Project References', description: 'Pelajari penerapan nyata melalui contoh project backend lengkap.', icon: 'FolderGit2', color: 'orange', topics: 7 },
+] as const;

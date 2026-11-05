@@ -1,0 +1,41 @@
+---
+title: "Security"
+description: "Pelajari Security melalui 12 topik yang terstruktur, dari konsep hingga praktik."
+icon: LockKeyhole
+---
+
+## Tentang kategori ini
+
+Keamanan dimulai dengan threat model: aset, aktor, entry point, dan dampak. Kontrol berlapis membantu ketika satu asumsi atau komponen gagal.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="Security Fundamentals" href="/docs/security/security-fundamentals">Keamanan dimulai dengan threat model: aset, aktor, entry point, dan dampak.</Card>
+<Card title="Password Security" href="/docs/security/password-security">Password kuat tetap dapat bocor melalui phishing atau logging.</Card>
+<Card title="CORS" href="/docs/security/cors">CORS adalah kebijakan browser untuk membaca response lintas origin.</Card>
+<Card title="Helmet & Security Headers" href="/docs/security/helmet-and-security-headers">Security headers mengurangi beberapa kelas serangan browser.</Card>
+<Card title="Rate Limiting" href="/docs/security/rate-limiting">Limiter perlu menentukan key, window, dan batas berdasarkan risiko endpoint.</Card>
+<Card title="Input Validation" href="/docs/security/input-validation">Input perlu diperiksa bentuk, ukuran, dan maknanya.</Card>
+<Card title="SQL Injection Prevention" href="/docs/security/sql-injection-prevention">Parameterized query memisahkan query dan data.</Card>
+<Card title="XSS Prevention" href="/docs/security/xss-prevention">XSS terjadi ketika data tak terpercaya dieksekusi sebagai kode pada browser.</Card>
+<Card title="CSRF Protection" href="/docs/security/csrf-protection">CSRF memanfaatkan credential yang dikirim browser secara otomatis.</Card>
+<Card title="Token Security" href="/docs/security/token-security">Token adalah credential dan harus diperlakukan seperti password selama valid.</Card>
+<Card title="Secret Management" href="/docs/security/secret-management">Secret harus disediakan saat runtime oleh secret manager atau environment platform.</Card>
+<Card title="Secure File Upload" href="/docs/security/secure-file-upload">Ekstensi dan Content-Type dari client tidak dapat dipercaya.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)** — Kontrol keamanan pada endpoint dan data API.
+- **Referensi dari [OWASP — Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)** — Allowlist, validasi bentuk, dan makna input.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

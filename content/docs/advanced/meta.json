@@ -1,0 +1,19 @@
+{
+  "title": "Advanced Backend",
+  "icon": "Workflow",
+  "pages": [
+    "index",
+    "file-upload",
+    "email-service",
+    "redis-caching",
+    "background-jobs",
+    "scheduled-tasks",
+    "websockets",
+    "notifications",
+    "webhooks",
+    "external-api-integration",
+    "audit-logging",
+    "idempotency"
+  ],
+  "defaultOpen": false
+}

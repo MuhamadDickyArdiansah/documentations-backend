@@ -1,0 +1,105 @@
+---
+title: "Database Migration"
+description: "Migration production harus kompatibel dengan versi aplikasi yang sedang berjalan."
+---
+
+## Overview
+
+Migration production harus kompatibel dengan versi aplikasi yang sedang berjalan. Pola expand-contract menambah schema baru sebelum menghentikan field lama.
+
+## Concept
+
+Fokus penerapan **Database Migration** adalah backup dan uji restore. Jalankan migrate deploy. Pantau lock dan durasi migration. Contoh berikut memperlihatkan konteks kategori Deployment; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Database Migration pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Backup dan uji restore.
+2. Jalankan migrate deploy.
+3. Pantau lock dan durasi migration.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```bash title="database-migration.bash"
+npx prisma@6.19.0 migrate deploy
+# Untuk project Prisma 6.19 yang memiliki schema dan migration terversi.
+# DATABASE_URL disediakan sebagai secret runtime pipeline.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run build
+# Atur environment platform, lalu jalankan smoke test setelah deploy.
+```
+
+## Code Explanation
+
+Migration production harus kompatibel dengan versi aplikasi yang sedang berjalan. Pola expand-contract menambah schema baru sebelum menghentikan field lama. Dalam implementasi nyata, jalankan migrate deploy dan pantau lock dan durasi migration sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Database Migration, verifikasi langkah “Backup dan uji restore” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Jalankan migrate deploy.
+- Batasi hak akses dan data yang dikirim ke client.
+- Pantau lock dan durasi migration.
+
+## Testing
+
+Uji Database Migration dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “backup dan uji restore” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Production Configuration](/docs/deployment/production-configuration)
+- [Deployment overview](/docs/deployment)
+- [Docker Node.js Guide](https://docs.docker.com/guides/nodejs/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Prisma — Panduan Prisma ORM v6](https://www.prisma.io/docs/guides/upgrade-prisma-orm/v6)** — Konteks versi Prisma 6 yang digunakan pada cuplikan; API versi terbaru dapat berbeda.
+- **Referensi dari [PostgreSQL — Transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html)** — Atomic commit dan rollback pada operasi terkait.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

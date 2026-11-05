@@ -1,0 +1,19 @@
+{
+  "title": "Architecture & Best Practices",
+  "icon": "Blocks",
+  "pages": [
+    "index",
+    "mvc-architecture",
+    "layered-architecture",
+    "clean-architecture",
+    "solid-principles",
+    "separation-of-concerns",
+    "service-pattern",
+    "repository-pattern",
+    "dependency-injection",
+    "error-handling-standards",
+    "logging-standards",
+    "code-organization"
+  ],
+  "defaultOpen": false
+}

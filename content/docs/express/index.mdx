@@ -1,0 +1,42 @@
+---
+title: "Express.js"
+description: "Pelajari Express.js melalui 13 topik yang terstruktur, dari konsep hingga praktik."
+icon: Route
+---
+
+## Tentang kategori ini
+
+Express menyusun handler HTTP dalam urutan middleware. Middleware yang mengirim response harus berhenti; middleware yang meneruskan request memanggil next.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="Express Introduction" href="/docs/express/express-introduction">Express menyusun handler HTTP dalam urutan middleware.</Card>
+<Card title="Project Setup" href="/docs/express/project-setup">Project ESM minimal memiliki package.json, app, dan entry point server.</Card>
+<Card title="Application Structure" href="/docs/express/application-structure">Struktur per fitur menjaga route, schema, dan service berdekatan.</Card>
+<Card title="Routing" href="/docs/express/routing">Router memetakan method dan path ke handler.</Card>
+<Card title="Middleware" href="/docs/express/middleware">Middleware dapat mengubah request, menolak request, atau meneruskannya.</Card>
+<Card title="Controllers" href="/docs/express/controllers">Controller menerjemahkan HTTP menjadi pemanggilan use case.</Card>
+<Card title="Services" href="/docs/express/services">Service menjalankan aturan bisnis tanpa bergantung pada object req dan res.</Card>
+<Card title="Repository Pattern" href="/docs/express/repository-pattern">Repository menyembunyikan detail penyimpanan di balik operasi domain.</Card>
+<Card title="Request & Response" href="/docs/express/request-and-response">Body dan query adalah input tak terpercaya.</Card>
+<Card title="Error Handling" href="/docs/express/error-handling">Express 5 meneruskan rejection dari async handler ke error middleware.</Card>
+<Card title="Validation" href="/docs/express/validation">Validasi harus dilakukan sebelum service memproses input.</Card>
+<Card title="Logging" href="/docs/express/logging">Structured logging menyimpan event sebagai JSON.</Card>
+<Card title="API Architecture" href="/docs/express/api-architecture">API yang maintainable memisahkan transport, use case, dan persistence.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Routing Guide](https://expressjs.com/en/guide/routing/)** — Route, router, dan pemetaan endpoint HTTP.
+- **Referensi dari [Express — Using Middleware](https://expressjs.com/en/guide/using-middleware/)** — Urutan middleware dan penerusan request.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

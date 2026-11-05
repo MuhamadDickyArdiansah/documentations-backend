@@ -1,0 +1,105 @@
+---
+title: "Health Checks"
+description: "Liveness menunjukkan proses masih hidup; readiness menunjukkan proses siap melayani request."
+---
+
+## Overview
+
+Liveness menunjukkan proses masih hidup; readiness menunjukkan proses siap melayani request. Jangan membuat liveness gagal hanya karena dependensi sementara lambat.
+
+## Concept
+
+Fokus penerapan **Health Checks** adalah pisahkan /health dan /ready. Gunakan timeout. Jangan bocorkan konfigurasi internal. Contoh berikut memperlihatkan konteks kategori Deployment; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Health Checks pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pisahkan /health dan /ready.
+2. Gunakan timeout.
+3. Jangan bocorkan konfigurasi internal.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="health-checks.mjs"
+export function registerHealth(app) {
+  app.get("/health", (_req, res) => res.json({ data: { status: "ok" } }));
+}
+// Readiness database memerlukan handler terpisah dengan timeout.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run build
+# Atur environment platform, lalu jalankan smoke test setelah deploy.
+```
+
+## Code Explanation
+
+Liveness menunjukkan proses masih hidup; readiness menunjukkan proses siap melayani request. Jangan membuat liveness gagal hanya karena dependensi sementara lambat. Dalam implementasi nyata, gunakan timeout dan jangan bocorkan konfigurasi internal sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Health Checks, verifikasi langkah “Pisahkan /health dan /ready” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Gunakan timeout.
+- Batasi hak akses dan data yang dikirim ke client.
+- Jangan bocorkan konfigurasi internal.
+
+## Testing
+
+Uji Health Checks dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pisahkan /health dan /ready” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Monitoring](/docs/deployment/monitoring)
+- [Deployment overview](/docs/deployment)
+- [Docker Node.js Guide](https://docs.docker.com/guides/nodejs/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Health Checks and Graceful Shutdown](https://expressjs.com/en/advanced/healthcheck-graceful-shutdown/)** — Readiness, liveness, serta penghentian proses.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

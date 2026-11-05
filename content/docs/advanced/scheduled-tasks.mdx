@@ -1,0 +1,109 @@
+---
+title: "Scheduled Tasks"
+description: "Scheduler multi-instance dapat menjalankan tugas yang sama beberapa kali."
+---
+
+## Overview
+
+Scheduler multi-instance dapat menjalankan tugas yang sama beberapa kali. Gunakan leader lock atau scheduler terpusat dan catat eksekusi agar tugas tidak hilang tanpa jejak.
+
+## Concept
+
+Fokus penerapan **Scheduled Tasks** adalah tetapkan timezone eksplisit. Gunakan lock dengan expiry. Tangani job yang melewati jadwal berikutnya. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Scheduled Tasks pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tetapkan timezone eksplisit.
+2. Gunakan lock dengan expiry.
+3. Tangani job yang melewati jadwal berikutnya.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="scheduled-tasks.mjs"
+const interval = setInterval(() => {
+  console.log({ at: new Date().toISOString(), task: "local-heartbeat" });
+}, 60_000);
+interval.unref();
+// Untuk tugas terjadwal persisten: scheduler terpusat + lock dan riwayat eksekusi.
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+Scheduler multi-instance dapat menjalankan tugas yang sama beberapa kali. Gunakan leader lock atau scheduler terpusat dan catat eksekusi agar tugas tidak hilang tanpa jejak. Dalam implementasi nyata, gunakan lock dengan expiry dan tangani job yang melewati jadwal berikutnya sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Scheduled Tasks, verifikasi langkah “Tetapkan timezone eksplisit” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Gunakan lock dengan expiry.
+- Batasi hak akses dan data yang dikirim ke client.
+- Tangani job yang melewati jadwal berikutnya.
+
+## Testing
+
+Uji Scheduled Tasks dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tetapkan timezone eksplisit” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [WebSockets](/docs/advanced/websockets)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [BullMQ — Official Documentation](https://docs.bullmq.io/)** — Queue, retry, jobs, dan pola background processing.
+- **Referensi dari [Node.js — Timers API](https://nodejs.org/api/timers.html)** — Timer dan interval lokal; bukan scheduler persisten.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

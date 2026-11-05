@@ -1,0 +1,21 @@
+{
+  "title": "JavaScript & TypeScript",
+  "icon": "Code2",
+  "pages": [
+    "index",
+    "javascript-fundamentals",
+    "variables-and-data-types",
+    "functions",
+    "objects-and-arrays",
+    "asynchronous-programming",
+    "promise",
+    "async-await",
+    "modules",
+    "error-handling",
+    "typescript-fundamentals",
+    "type-and-interface",
+    "generics",
+    "typescript-configuration"
+  ],
+  "defaultOpen": false
+}

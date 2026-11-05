@@ -1,0 +1,110 @@
+---
+title: "SQL & NoSQL"
+description: "SQL menawarkan relasi dan query terstruktur; NoSQL memiliki banyak model berbeda."
+---
+
+## Overview
+
+SQL menawarkan relasi dan query terstruktur; NoSQL memiliki banyak model berbeda. Pilih berdasarkan access pattern, kebutuhan transaksi, dan operasi tim, bukan sekadar tren.
+
+## Concept
+
+Fokus penerapan **SQL & NoSQL** adalah daftar query utama. Tentukan kebutuhan konsistensi. Ukur beban representatif. Contoh berikut memperlihatkan konteks kategori Database; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai PostgreSQL. Jalankan SQL pada database development melalui psql atau SQL editor.
+
+## Project Structure
+
+Simpan latihan SQL & NoSQL pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Daftar query utama.
+2. Tentukan kebutuhan konsistensi.
+3. Ukur beban representatif.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```sql title="sql-and-nosql.sql"
+-- Relasional: query dapat menyatakan relasi dan filter sekaligus.
+SELECT u.email, count(n.id) AS total_notes
+FROM users u LEFT JOIN user_notes n ON n.owner_id = u.id
+GROUP BY u.id, u.email;
+-- Model document biasanya memilih embedding atau reference sesuai access pattern.
+```
+
+### Konteks kategori
+
+```sql title="schema.sql"
+CREATE TABLE notes (
+  id uuid PRIMARY KEY,
+  owner_id uuid NOT NULL,
+  title varchar(200) NOT NULL CHECK (length(title) > 0),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX notes_owner_created_idx ON notes(owner_id, created_at DESC, id);
+```
+
+## Code Explanation
+
+SQL menawarkan relasi dan query terstruktur; NoSQL memiliki banyak model berbeda. Pilih berdasarkan access pattern, kebutuhan transaksi, dan operasi tim, bukan sekadar tren. Dalam implementasi nyata, tentukan kebutuhan konsistensi dan ukur beban representatif sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk SQL & NoSQL, verifikasi langkah “Daftar query utama” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tentukan kebutuhan konsistensi.
+- Batasi hak akses dan data yang dikirim ke client.
+- Ukur beban representatif.
+
+## Testing
+
+Uji SQL & NoSQL dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “daftar query utama” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [PostgreSQL](/docs/database/postgresql)
+- [Database overview](/docs/database)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/current/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [PostgreSQL — Official Documentation](https://www.postgresql.org/docs/current/)** — Model relasional, SQL, dan operasi database.
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,130 @@
+---
+title: "OAuth / Google Login"
+description: "Gunakan Authorization Code dengan PKCE, state, dan redirect URI yang tepat."
+---
+
+## Overview
+
+Gunakan Authorization Code dengan PKCE, state, dan redirect URI yang tepat. OpenID Connect menambahkan ID token untuk identitas; OAuth sendiri adalah delegasi akses.
+
+## Concept
+
+Fokus penerapan **OAuth / Google Login** adalah validasi state dan nonce. Verifikasi ID token dengan SDK resmi. Jangan menautkan akun hanya berdasarkan email tanpa kebijakan aman. Contoh berikut memperlihatkan konteks kategori Authentication; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan OAuth / Google Login pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Validasi state dan nonce.
+2. Verifikasi ID token dengan SDK resmi.
+3. Jangan menautkan akun hanya berdasarkan email tanpa kebijakan aman.
+
+### Contoh terfokus
+
+Cuplikan route memakai helper dan state dari examples/complete-backend/app.mjs. Implementasi lengkap yang dapat dijalankan ada pada [JWT Authentication](/docs/authentication/jwt-authentication). Cuplikan modul mandiri dapat disimpan sebagai .mjs; import examples menggunakan path relatif dari root repository.
+
+```js title="oauth-google-login.mjs"
+import { randomBytes, createHash } from "node:crypto";
+const verifier = randomBytes(32).toString("base64url");
+const challenge = createHash("sha256").update(verifier).digest("base64url");
+const state = randomBytes(32).toString("base64url");
+// Simpan verifier dan state pada sesi server sementara.
+// Kirim challenge, code_challenge_method=S256, dan state ke authorization endpoint.
+// Callback wajib memvalidasi state; gunakan SDK OIDC untuk verifikasi ID token.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"reader@example.com","password":"a-long-example-password"}'
+```
+
+## Code Explanation
+
+Gunakan Authorization Code dengan PKCE, state, dan redirect URI yang tepat. OpenID Connect menambahkan ID token untuk identitas; OAuth sendiri adalah delegasi akses. Dalam implementasi nyata, verifikasi id token dengan sdk resmi dan jangan menautkan akun hanya berdasarkan email tanpa kebijakan aman sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk OAuth / Google Login, verifikasi langkah “Validasi state dan nonce” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Verifikasi ID token dengan SDK resmi.
+- Batasi hak akses dan data yang dikirim ke client.
+- Jangan menautkan akun hanya berdasarkan email tanpa kebijakan aman.
+
+## Testing
+
+Uji OAuth / Google Login dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “validasi state dan nonce” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Multi-Factor Authentication](/docs/authentication/multi-factor-authentication)
+- [Authentication overview](/docs/authentication)
+- [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Google Identity — OpenID Connect](https://developers.google.com/identity/openid-connect/openid-connect)** — Authorization flow dan validasi identitas Google.
+- **Referensi dari [OWASP — OAuth2 Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Cheat_Sheet.html)** — PKCE, state, redirect URI, dan ancaman OAuth.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

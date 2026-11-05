@@ -1,0 +1,133 @@
+---
+title: "Refresh Token"
+description: "Refresh token opaque disimpan client sebagai credential dan server menyimpan hash-nya."
+---
+
+## Overview
+
+Refresh token opaque disimpan client sebagai credential dan server menyimpan hash-nya. Rotasi sekali pakai memungkinkan deteksi replay dan pencabutan satu keluarga sesi.
+
+## Concept
+
+Fokus penerapan **Refresh Token** adalah generate token acak. Rotasi secara atomik. Cabut keluarga sesi saat token lama digunakan ulang. Contoh berikut memperlihatkan konteks kategori Authentication; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Refresh Token pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Generate token acak.
+2. Rotasi secara atomik.
+3. Cabut keluarga sesi saat token lama digunakan ulang.
+
+### Contoh terfokus
+
+Cuplikan route memakai helper dan state dari examples/complete-backend/app.mjs. Implementasi lengkap yang dapat dijalankan ada pada [JWT Authentication](/docs/authentication/jwt-authentication). Cuplikan modul mandiri dapat disimpan sebagai .mjs; import examples menggunakan path relatif dari root repository.
+
+```js title="refresh-token.mjs"
+app.post('/api/auth/refresh', async (req, res) => {
+    const data = parse(refreshInput, req.body, res); if (!data) return;
+    const record = refreshes.get(digest(data.refreshToken));
+    const session = record && sessions.get(record.sid);
+    if (!record || !session || session.revoked || session.expiresAt <= now()) return error(res, 401, 'INVALID_REFRESH', 'Sesi tidak valid.');
+    if (record.used) { session.revoked = true; return error(res, 401, 'REFRESH_REPLAY', 'Sesi dicabut. Silakan login kembali.'); }
+    // Mark used before the first await; retain the record for replay detection.
+    record.used = true;
+    return res.json({ data: await issue(session.userId, record.sid) });
+  });
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"reader@example.com","password":"a-long-example-password"}'
+```
+
+## Code Explanation
+
+Refresh token opaque disimpan client sebagai credential dan server menyimpan hash-nya. Rotasi sekali pakai memungkinkan deteksi replay dan pencabutan satu keluarga sesi. Dalam implementasi nyata, rotasi secara atomik dan cabut keluarga sesi saat token lama digunakan ulang sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Refresh Token, verifikasi langkah “Generate token acak” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Rotasi secara atomik.
+- Batasi hak akses dan data yang dikirim ke client.
+- Cabut keluarga sesi saat token lama digunakan ulang.
+
+## Testing
+
+Uji Refresh Token dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “generate token acak” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Token Verification](/docs/authentication/token-verification)
+- [Authentication overview](/docs/authentication)
+- [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — OAuth2 Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Cheat_Sheet.html)** — PKCE, state, redirect URI, dan ancaman OAuth.
+- **Referensi dari [OWASP — Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)** — Penyimpanan sesi, expiry, cookie, serta pencabutan sesi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

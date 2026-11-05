@@ -1,0 +1,109 @@
+---
+title: "CSRF Protection"
+description: "CSRF memanfaatkan credential yang dikirim browser secara otomatis."
+---
+
+## Overview
+
+CSRF memanfaatkan credential yang dikirim browser secara otomatis. Gunakan SameSite, pemeriksaan Origin, dan token CSRF sesuai jenis request serta model lintas origin.
+
+## Concept
+
+Fokus penerapan **CSRF Protection** adalah lindungi endpoint mutasi. Jangan mutasi lewat GET. Uji request lintas origin. Contoh berikut memperlihatkan konteks kategori Security; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan CSRF Protection pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Lindungi endpoint mutasi.
+2. Jangan mutasi lewat GET.
+3. Uji request lintas origin.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="csrf-protection.mjs"
+const allowed = new Set(["https://app.example.com"]);
+export function checkOrigin(req, res, next) {
+  if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();
+  if (!allowed.has(req.headers.origin)) return res.status(403).end();
+  next();
+}
+// Terapkan bersama SameSite dan strategi CSRF token sesuai konteks.
+```
+
+### Konteks kategori
+
+```js title="safe-compare.mjs"
+import { timingSafeEqual } from "node:crypto";
+export function equalDigest(a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false;
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+## Code Explanation
+
+CSRF memanfaatkan credential yang dikirim browser secara otomatis. Gunakan SameSite, pemeriksaan Origin, dan token CSRF sesuai jenis request serta model lintas origin. Dalam implementasi nyata, jangan mutasi lewat get dan uji request lintas origin sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk CSRF Protection, verifikasi langkah “Lindungi endpoint mutasi” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Jangan mutasi lewat GET.
+- Batasi hak akses dan data yang dikirim ke client.
+- Uji request lintas origin.
+
+## Testing
+
+Uji CSRF Protection dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “lindungi endpoint mutasi” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Token Security](/docs/security/token-security)
+- [Security overview](/docs/security)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — CSRF Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)** — Perlindungan request dengan credential otomatis browser.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

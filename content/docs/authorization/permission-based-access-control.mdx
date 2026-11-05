@@ -1,0 +1,132 @@
+---
+title: "Permission-Based Access Control"
+description: "Permission menyatakan kemampuan spesifik seperti notes:read."
+---
+
+## Overview
+
+Permission menyatakan kemampuan spesifik seperti notes:read. Pendekatan ini mengurangi kondisi role yang tersebar dan memudahkan penambahan role baru.
+
+## Concept
+
+Fokus penerapan **Permission-Based Access Control** adalah gunakan permission yang stabil. Hindari wildcard berlebihan. Audit perubahan permission. Contoh berikut memperlihatkan konteks kategori Authorization; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Permission-Based Access Control pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan permission yang stabil.
+2. Hindari wildcard berlebihan.
+3. Audit perubahan permission.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="permission-based-access-control.mjs"
+export function requirePermission(permission, policy) {
+  return (req, res, next) => {
+    if (!policy(req.actor, permission)) return res.status(403).json({ error: { code: "FORBIDDEN" } });
+    next();
+  };
+}
+```
+
+### Konteks kategori
+
+```js title="policy.mjs"
+export function canUpdateNote(actor, note) {
+  if (!actor || !note) return false;
+  return actor.id === note.ownerId;
+}
+console.assert(canUpdateNote({ id: "u1" }, { ownerId: "u1" }));
+console.assert(!canUpdateNote({ id: "u2" }, { ownerId: "u1" }));
+```
+
+## Code Explanation
+
+Permission menyatakan kemampuan spesifik seperti notes:read. Pendekatan ini mengurangi kondisi role yang tersebar dan memudahkan penambahan role baru. Dalam implementasi nyata, hindari wildcard berlebihan dan audit perubahan permission sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Permission-Based Access Control, verifikasi langkah “Gunakan permission yang stabil” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Hindari wildcard berlebihan.
+- Batasi hak akses dan data yang dikirim ke client.
+- Audit perubahan permission.
+
+## Testing
+
+Uji Permission-Based Access Control dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan permission yang stabil” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Resource Ownership](/docs/authorization/resource-ownership)
+- [Authorization overview](/docs/authorization)
+- [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)** — Least privilege, default deny, dan pemeriksaan akses resource.
+- **Referensi dari [OWASP — REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)** — Kontrol keamanan pada endpoint dan data API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

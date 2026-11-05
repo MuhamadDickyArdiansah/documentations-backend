@@ -1,0 +1,109 @@
+---
+title: "Error Handling"
+description: "Error event pada stream harus ditangani."
+---
+
+## Overview
+
+Error event pada stream harus ditangani. uncaughtException menunjukkan state proses tidak lagi dapat dipercaya; hentikan secara terkontrol dan biarkan supervisor melakukan restart.
+
+## Concept
+
+Fokus penerapan **Error Handling** adalah tangani error pada boundary. Hindari menangkap lalu mengabaikan error. Lakukan graceful shutdown. Contoh berikut memperlihatkan konteks kategori Node.js; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Error Handling pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tangani error pada boundary.
+2. Hindari menangkap lalu mengabaikan error.
+3. Lakukan graceful shutdown.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="error-handling.mjs"
+import { pipeline } from "node:stream/promises";
+import { createReadStream, createWriteStream } from "node:fs";
+// Kedua path berasal dari konfigurasi server, bukan input bebas.
+await pipeline(createReadStream("input.txt"), createWriteStream("output.txt"));
+// pipeline meneruskan error dan membersihkan stream.
+```
+
+### Konteks kategori
+
+```js title="server.mjs"
+import { createServer } from "node:http";
+const server = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ data: { status: "ok" } }));
+});
+server.listen(4000, "127.0.0.1");
+```
+
+## Code Explanation
+
+Error event pada stream harus ditangani. uncaughtException menunjukkan state proses tidak lagi dapat dipercaya; hentikan secara terkontrol dan biarkan supervisor melakukan restart. Dalam implementasi nyata, hindari menangkap lalu mengabaikan error dan lakukan graceful shutdown sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Error Handling, verifikasi langkah “Tangani error pada boundary” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Hindari menangkap lalu mengabaikan error.
+- Batasi hak akses dan data yang dikirim ke client.
+- Lakukan graceful shutdown.
+
+## Testing
+
+Uji Error Handling dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tangani error pada boundary” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Package Management](/docs/nodejs/package-management)
+- [Node.js overview](/docs/nodejs)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Process API](https://nodejs.org/api/process.html)** — Environment variables, lifecycle, dan signal proses.
+- **Referensi dari [Express — Error Handling](https://expressjs.com/en/guide/error-handling/)** — Async error dan middleware penanganan kegagalan.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

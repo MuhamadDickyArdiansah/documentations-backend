@@ -1,0 +1,110 @@
+---
+title: "Clean Architecture"
+description: "Clean Architecture menempatkan aturan bisnis di pusat dan infrastruktur di luar."
+---
+
+## Overview
+
+Clean Architecture menempatkan aturan bisnis di pusat dan infrastruktur di luar. Manfaatnya berasal dari dependency inversion, bukan jumlah folder atau interface.
+
+## Concept
+
+Fokus penerapan **Clean Architecture** adalah definisikan use case. Inject port. Implementasikan adapter di composition root. Contoh berikut memperlihatkan konteks kategori Architecture & Best Practices; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Clean Architecture pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Definisikan use case.
+2. Inject port.
+3. Implementasikan adapter di composition root.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```text title="clean-architecture.text"
+domain/       # invariant dan entity
+use-cases/    # orchestration, bergantung pada port
+ports/        # kontrak repository dan provider
+adapters/     # HTTP, database, queue
+main.mjs      # composition root
+```
+
+### Konteks kategori
+
+```js title="notes.service.mjs"
+export function createNoteService(repository) {
+  return {
+    async findForUser(id, actor) {
+      const note = await repository.findById(id);
+      return note?.ownerId === actor.id ? note : null;
+    },
+  };
+}
+```
+
+## Code Explanation
+
+Clean Architecture menempatkan aturan bisnis di pusat dan infrastruktur di luar. Manfaatnya berasal dari dependency inversion, bukan jumlah folder atau interface. Dalam implementasi nyata, inject port dan implementasikan adapter di composition root sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Clean Architecture, verifikasi langkah “Definisikan use case” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Inject port.
+- Batasi hak akses dan data yang dikirim ke client.
+- Implementasikan adapter di composition root.
+
+## Testing
+
+Uji Clean Architecture dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “definisikan use case” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [SOLID Principles](/docs/architecture/solid-principles)
+- [Architecture & Best Practices overview](/docs/architecture)
+- [Node.js Learn](https://nodejs.org/en/learn)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Robert C. Martin — The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)** — Aturan dependensi dan pemisahan domain dari infrastruktur.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

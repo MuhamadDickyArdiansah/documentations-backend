@@ -1,0 +1,114 @@
+---
+title: "Service Pattern"
+description: "Service mengorkestrasi satu use case dan transaksi terkait."
+---
+
+## Overview
+
+Service mengorkestrasi satu use case dan transaksi terkait. Service tidak perlu mengetahui Express atau status HTTP agar bisa dipanggil dari job dan CLI.
+
+## Concept
+
+Fokus penerapan **Service Pattern** adalah gunakan input DTO. Inject repository. Return object domain atau error terstruktur. Contoh berikut memperlihatkan konteks kategori Architecture & Best Practices; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Service Pattern pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan input DTO.
+2. Inject repository.
+3. Return object domain atau error terstruktur.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="service-pattern.mjs"
+export function createUserService(repository, passwordHasher) {
+  return {
+    async register({ email, password }) {
+      const passwordHash = await passwordHasher(password);
+      return repository.create({ email: email.toLowerCase(), passwordHash });
+    },
+  };
+}
+// Repository wajib menjamin unique email secara atomik.
+```
+
+### Konteks kategori
+
+```js title="notes.service.mjs"
+export function createNoteService(repository) {
+  return {
+    async findForUser(id, actor) {
+      const note = await repository.findById(id);
+      return note?.ownerId === actor.id ? note : null;
+    },
+  };
+}
+```
+
+## Code Explanation
+
+Service mengorkestrasi satu use case dan transaksi terkait. Service tidak perlu mengetahui Express atau status HTTP agar bisa dipanggil dari job dan CLI. Dalam implementasi nyata, inject repository dan return object domain atau error terstruktur sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Service Pattern, verifikasi langkah “Gunakan input DTO” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Inject repository.
+- Batasi hak akses dan data yang dikirim ke client.
+- Return object domain atau error terstruktur.
+
+## Testing
+
+Uji Service Pattern dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan input dto” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Repository Pattern](/docs/architecture/repository-pattern)
+- [Architecture & Best Practices overview](/docs/architecture)
+- [Node.js Learn](https://nodejs.org/en/learn)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Martin Fowler — Service Layer](https://martinfowler.com/eaaCatalog/serviceLayer.html)** — Boundary service dan orkestrasi operasi bisnis.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

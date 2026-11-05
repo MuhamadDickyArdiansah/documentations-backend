@@ -1,0 +1,115 @@
+---
+title: "Prisma ORM"
+description: "Prisma menyediakan schema dan client bertipe."
+---
+
+## Overview
+
+Prisma menyediakan schema dan client bertipe. Type safety tidak menggantikan constraint database, authorization, maupun transaksi untuk operasi lintas record.
+
+## Concept
+
+Fokus penerapan **Prisma ORM** adalah definisikan schema. Generate client. Gunakan select untuk membatasi field. Contoh berikut memperlihatkan konteks kategori Database; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai PostgreSQL. Jalankan SQL pada database development melalui psql atau SQL editor.
+
+## Project Structure
+
+Simpan latihan Prisma ORM pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Definisikan schema.
+2. Generate client.
+3. Gunakan select untuk membatasi field.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="prisma-orm.mjs"
+// Contoh ini secara eksplisit untuk Prisma 6.19, bukan API versi lain.
+// Project latihan: npm install @prisma/client@6.19.0
+// Dev tooling: npm install --save-dev prisma@6.19.0
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+try {
+  const notes = await prisma.note.findMany({ where: { ownerId: "<user-id>" }, select: { id: true, title: true }, take: 20 });
+  console.log(notes);
+} finally { await prisma.$disconnect(); }
+// Memerlukan model Note, migration, DATABASE_URL, dan prisma generate.
+```
+
+### Konteks kategori
+
+```sql title="schema.sql"
+CREATE TABLE notes (
+  id uuid PRIMARY KEY,
+  owner_id uuid NOT NULL,
+  title varchar(200) NOT NULL CHECK (length(title) > 0),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX notes_owner_created_idx ON notes(owner_id, created_at DESC, id);
+```
+
+## Code Explanation
+
+Prisma menyediakan schema dan client bertipe. Type safety tidak menggantikan constraint database, authorization, maupun transaksi untuk operasi lintas record. Dalam implementasi nyata, generate client dan gunakan select untuk membatasi field sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Prisma ORM, verifikasi langkah “Definisikan schema” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Generate client.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan select untuk membatasi field.
+
+## Testing
+
+Uji Prisma ORM dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “definisikan schema” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Prisma Schema](/docs/database/prisma-schema)
+- [Database overview](/docs/database)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/current/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Prisma — Panduan Prisma ORM v6](https://www.prisma.io/docs/guides/upgrade-prisma-orm/v6)** — Konteks versi Prisma 6 yang digunakan pada cuplikan; API versi terbaru dapat berbeda.
+- **Referensi dari [PostgreSQL — Official Documentation](https://www.postgresql.org/docs/current/)** — Model relasional, SQL, dan operasi database.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

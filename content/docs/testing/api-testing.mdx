@@ -1,0 +1,113 @@
+---
+title: "API Testing"
+description: "API test mengirim request HTTP nyata dan memeriksa status, header, serta body."
+---
+
+## Overview
+
+API test mengirim request HTTP nyata dan memeriksa status, header, serta body. Gunakan port dinamis untuk menghindari konflik pada CI paralel.
+
+## Concept
+
+Fokus penerapan **API Testing** adalah start server pada port 0. Kirim fetch ke loopback. Tutup server setelah test. Contoh berikut memperlihatkan konteks kategori Testing; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan API Testing pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Start server pada port 0.
+2. Kirim fetch ke loopback.
+3. Tutup server setelah test.
+
+### Contoh terfokus
+
+Jalankan berkas .mjs ini dari root repository agar path import examples sesuai.
+
+```js title="api-testing.mjs"
+import { createApp } from "./examples/complete-backend/app.mjs";
+import { randomBytes } from "node:crypto";
+const app = await createApp({ secret: randomBytes(48).toString("hex") });
+const server = app.listen(0, "127.0.0.1", async () => {
+  try {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/health`);
+    console.assert(response.status === 200);
+  } finally { server.close(); }
+});
+```
+
+### Konteks kategori
+
+```js title="policy.test.mjs"
+import test from "node:test";
+import assert from "node:assert/strict";
+const canRead = (actor, resource) => actor.id === resource.ownerId;
+test("menolak akses lintas owner", () => {
+  assert.equal(canRead({ id: "u2" }, { ownerId: "u1" }), false);
+});
+```
+
+## Code Explanation
+
+API test mengirim request HTTP nyata dan memeriksa status, header, serta body. Gunakan port dinamis untuk menghindari konflik pada CI paralel. Dalam implementasi nyata, kirim fetch ke loopback dan tutup server setelah test sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk API Testing, verifikasi langkah “Start server pada port 0” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Kirim fetch ke loopback.
+- Batasi hak akses dan data yang dikirim ke client.
+- Tutup server setelah test.
+
+## Testing
+
+Uji API Testing dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “start server pada port 0” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Mocking](/docs/testing/mocking)
+- [Testing overview](/docs/testing)
+- [Node.js Test Runner](https://nodejs.org/api/test.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Test Runner](https://nodejs.org/api/test.html)** — Unit test, subtest, mocking, dan coverage.
+- **Referensi dari [Node.js — HTTP API](https://nodejs.org/api/http.html)** — Request, response, server, dan batas koneksi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

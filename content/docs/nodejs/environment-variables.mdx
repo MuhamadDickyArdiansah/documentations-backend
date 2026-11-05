@@ -1,0 +1,109 @@
+---
+title: "Environment Variables"
+description: "Environment variable dikirim sebagai string."
+---
+
+## Overview
+
+Environment variable dikirim sebagai string. Validasi konfigurasi sekali saat startup sehingga aplikasi gagal cepat jika konfigurasi wajib tidak tersedia.
+
+## Concept
+
+Fokus penerapan **Environment Variables** adalah pisahkan .env dari Git. Parse port sebagai angka. Jangan gunakan prefix public untuk secret. Contoh berikut memperlihatkan konteks kategori Node.js; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Environment Variables pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pisahkan .env dari Git.
+2. Parse port sebagai angka.
+3. Jangan gunakan prefix public untuk secret.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="environment-variables.mjs"
+const port = Number(process.env.PORT ?? 4000);
+if (!Number.isInteger(port) || port < 1 || port > 65535) {
+  throw new Error("PORT harus integer 1–65535");
+}
+console.log({ port }); // Jangan log seluruh process.env.
+```
+
+### Konteks kategori
+
+```js title="server.mjs"
+import { createServer } from "node:http";
+const server = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ data: { status: "ok" } }));
+});
+server.listen(4000, "127.0.0.1");
+```
+
+## Code Explanation
+
+Environment variable dikirim sebagai string. Validasi konfigurasi sekali saat startup sehingga aplikasi gagal cepat jika konfigurasi wajib tidak tersedia. Dalam implementasi nyata, parse port sebagai angka dan jangan gunakan prefix public untuk secret sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Environment Variables, verifikasi langkah “Pisahkan .env dari Git” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Parse port sebagai angka.
+- Batasi hak akses dan data yang dikirim ke client.
+- Jangan gunakan prefix public untuk secret.
+
+## Testing
+
+Uji Environment Variables dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pisahkan .env dari git” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [File System](/docs/nodejs/file-system)
+- [Node.js overview](/docs/nodejs)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Process API](https://nodejs.org/api/process.html)** — Environment variables, lifecycle, dan signal proses.
+- **Referensi dari [Zod — Defining Schemas](https://zod.dev/api)** — Schema runtime, parsing, dan pembatasan field.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

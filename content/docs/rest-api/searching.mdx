@@ -1,0 +1,124 @@
+---
+title: "Searching"
+description: "Pencarian substring cukup untuk data kecil; full-text index lebih cocok untuk skala besar."
+---
+
+## Overview
+
+Pencarian substring cukup untuk data kecil; full-text index lebih cocok untuk skala besar. Batasi panjang query dan jangan membuat regex tak terbatas dari input user.
+
+## Concept
+
+Fokus penerapan **Searching** adalah normalisasi query. Gunakan parameterized query. Pertimbangkan full-text index PostgreSQL. Contoh berikut memperlihatkan konteks kategori REST API; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Searching pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Normalisasi query.
+2. Gunakan parameterized query.
+3. Pertimbangkan full-text index PostgreSQL.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="searching.mjs"
+export function searchTitles(notes, query) {
+  const q = query.trim().toLocaleLowerCase("id-ID");
+  if (!q || q.length > 100) return [];
+  return notes.filter(n => n.title.toLocaleLowerCase("id-ID").includes(q));
+}
+// Scope notes ke actor sebelum memanggil fungsi ini.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i http://localhost:4000/health
+# HTTP 200
+# {"data":{"status":"ok"}}
+```
+
+## Code Explanation
+
+Pencarian substring cukup untuk data kecil; full-text index lebih cocok untuk skala besar. Batasi panjang query dan jangan membuat regex tak terbatas dari input user. Dalam implementasi nyata, gunakan parameterized query dan pertimbangkan full-text index postgresql sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Searching, verifikasi langkah “Normalisasi query” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Gunakan parameterized query.
+- Batasi hak akses dan data yang dikirim ke client.
+- Pertimbangkan full-text index PostgreSQL.
+
+## Testing
+
+Uji Searching dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “normalisasi query” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [API Versioning](/docs/rest-api/api-versioning)
+- [REST API overview](/docs/rest-api)
+- [HTTP Semantics — RFC 9110](https://www.rfc-editor.org/rfc/rfc9110)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [IETF — RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110)** — Semantik method, status code, header, dan representasi.
+- **Referensi dari [Microsoft — REST API Guidelines](https://github.com/microsoft/api-guidelines)** — Desain resource, daftar hasil, filtering, dan kontrak API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,157 @@
+---
+title: Personal Finance Management API
+description: Referensi domain keuangan dengan integer minor units, ownership, transfer, dan idempotency.
+---
+
+
+## Overview
+
+Project ini menunjukkan invariant inti pencatatan transfer: uang tidak dibuat atau hilang, saldo tidak boleh negatif, dan retry tidak menggandakan transaksi. Contoh domain berada pada examples/finance/ledger.mjs dan diuji otomatis.
+
+## Concept
+
+Nominal disimpan sebagai integer minor units sesuai mata uang. Sebagai contoh, jika konfigurasi currency memiliki dua digit desimal, 12345 berarti 123,45. Tentukan skala per currency secara eksplisit; kode ini tidak melakukan konversi atau foreign exchange.
+
+Transfer contoh hanya diizinkan antara akun milik actor yang sama dan mata uang yang sama. Seluruh validasi selesai sebelum mutasi. Karena tidak ada await, perubahan berlangsung sebagai satu langkah sinkron dalam satu proses; ini bukan transaksi lintas proses.
+
+## Prerequisites
+
+Node.js LTS, dasar [Transactions](/docs/database/transactions), [Resource Ownership](/docs/authorization/resource-ownership), dan [Idempotency](/docs/advanced/idempotency).
+
+## Installation
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+```
+
+
+## Project Structure
+
+```text title="examples/"
+finance/ledger.mjs       # Domain transfer in-memory
+domain.test.mjs          # Invariant dan abuse cases
+```
+
+
+## Implementation
+
+```js title="examples/finance/ledger.mjs"
+import { randomUUID } from 'node:crypto';
+// Single-process teaching model. Production transfers require a database transaction.
+export function createLedger() {
+  const accounts = new Map();
+  const transfers = new Map();
+  function owned(id, ownerId) { const row = accounts.get(id); if (!row || row.ownerId !== ownerId) throw new Error('ACCOUNT_NOT_FOUND'); return row; }
+  function amount(value) { if (!Number.isSafeInteger(value) || value <= 0) throw new Error('INVALID_AMOUNT'); }
+  return {
+    open(ownerId, currency = 'IDR') {
+      if (!ownerId || !/^[A-Z]{3}$/.test(currency)) throw new Error('INVALID_ACCOUNT');
+      const row = { id: randomUUID(), ownerId, currency, balanceMinor: 0 };
+      accounts.set(row.id, row); return { ...row };
+    },
+    credit(ownerId, id, amountMinor) {
+      amount(amountMinor); const row = owned(id, ownerId);
+      if (!Number.isSafeInteger(row.balanceMinor + amountMinor)) throw new Error('AMOUNT_OVERFLOW');
+      row.balanceMinor += amountMinor; return { ...row };
+    },
+    get(ownerId, id) { return { ...owned(id, ownerId) }; },
+    transfer(ownerId, { fromId, toId, amountMinor, key }) {
+      amount(amountMinor);
+      if (typeof key !== 'string' || !key || key.length > 100 || fromId === toId) throw new Error('INVALID_TRANSFER');
+      const from = owned(fromId, ownerId), to = owned(toId, ownerId);
+      const fingerprint = JSON.stringify([fromId, toId, amountMinor]);
+      const mapKey = JSON.stringify([ownerId, key]);
+      const prior = transfers.get(mapKey);
+      if (prior) { if (prior.fingerprint !== fingerprint) throw new Error('IDEMPOTENCY_CONFLICT'); return { ...prior.result }; }
+      if (from.currency !== to.currency) throw new Error('CURRENCY_MISMATCH');
+      if (from.balanceMinor < amountMinor) throw new Error('INSUFFICIENT_FUNDS');
+      if (!Number.isSafeInteger(to.balanceMinor + amountMinor)) throw new Error('AMOUNT_OVERFLOW');
+      // No await between validation and mutations: one atomic synchronous step in this process only.
+      from.balanceMinor -= amountMinor; to.balanceMinor += amountMinor;
+      const result = { id: randomUUID(), fromId, toId, amountMinor, currency: from.currency };
+      transfers.set(mapKey, { fingerprint, result }); return { ...result };
+    },
+  };
+}
+```
+
+
+### Coba dari root repository
+
+```js title="finance-demo.mjs"
+import { createLedger } from './examples/finance/ledger.mjs';
+const ledger = createLedger();
+const wallet = ledger.open('u1', 'IDR');
+const savings = ledger.open('u1', 'IDR');
+ledger.credit('u1', wallet.id, 10000);
+const transfer = ledger.transfer('u1', {
+  fromId: wallet.id, toId: savings.id, amountMinor: 3000, key: 'example-transfer-1',
+});
+console.log(transfer, ledger.get('u1', wallet.id));
+```
+
+
+## Code Explanation
+
+1. Number.isSafeInteger mencegah fractional amount dan nilai di luar presisi integer JavaScript.
+2. owned menyembunyikan akun pengguna lain melalui error yang sama dengan akun tidak ditemukan.
+3. Key idempotency di-scope ke actor dan terikat ke fingerprint input. Retry identik mengembalikan hasil lama.
+4. Saldo tujuan diperiksa sebelum write agar overflow tidak menimbulkan perubahan parsial.
+5. credit adalah operasi pendanaan tepercaya, bukan endpoint yang boleh diberikan kepada pengguna umum tanpa proses bisnis.
+
+## API Examples
+
+Modul ini adalah domain reference dan belum di-mount sebagai endpoint pada API notes. Kontrak integrasi yang dapat dibangun:
+
+| Method | Endpoint rancangan | Authentication | Request | Response |
+| --- | --- | --- | --- | --- |
+| POST | /api/accounts | Bearer + policy | currency | 201, account |
+| GET | /api/accounts/:id | Bearer + owner | — | 200, account |
+| POST | /api/transfers | Bearer + owner | fromId, toId, amountMinor | 201, transfer |
+
+Handler transfer membaca Idempotency-Key dari header dan actor dari middleware. Jangan menerima ownerId dari body. Contoh request:
+
+```json title="POST /api/transfers — kontrak JSON"
+{"fromId":"<wallet-id>","toId":"<savings-id>","amountMinor":3000}
+```
+
+
+## Error Handling
+
+| Error domain | Status integrasi | Makna |
+| --- | --- | --- |
+| ACCOUNT_NOT_FOUND | 404 | Akun tidak tersedia dalam scope actor |
+| INVALID_AMOUNT | 422 | Jumlah bukan integer positif yang aman |
+| INSUFFICIENT_FUNDS | 409 | Saldo tidak cukup |
+| CURRENCY_MISMATCH | 422 | Currency berbeda |
+| IDEMPOTENCY_CONFLICT | 409 | Key dipakai dengan payload berbeda |
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas domain demo">Gunakan database transaction, row locks atau serializable isolation, unique idempotency key, dan double-entry journal untuk produk nyata. Tambahkan audit append-only, retention, reconciliation, serta policy pendanaan. Adapter Map tidak aman sebagai sistem pencatatan keuangan production.</Callout>
+
+## Testing
+
+Test memverifikasi total saldo tetap, retry menghasilkan transfer yang sama, saldo tak cukup tidak memutasi akun, input pecahan ditolak, dan akun pengguna lain tidak dapat diakses.
+
+```bash title="terminal"
+npm run test:examples
+```
+
+
+## Related Topics
+
+- [Transactions](/docs/database/transactions)
+- [Idempotency](/docs/advanced/idempotency)
+- [Audit Logging](/docs/advanced/audit-logging)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [PostgreSQL — Transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html)** — Atomic commit dan rollback pada operasi terkait.
+- **Referensi dari [Stripe — Idempotent Requests](https://docs.stripe.com/api/idempotent_requests)** — Key idempotency dan perilaku retry pada API.
+- **Referensi dari [OWASP — Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)** — Least privilege, default deny, dan pemeriksaan akses resource.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

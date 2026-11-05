@@ -1,0 +1,128 @@
+---
+title: "CRUD Validation"
+description: "Schema create dan update berbeda: create mewajibkan field, update menerima subset yang diizinkan."
+---
+
+## Overview
+
+Schema create dan update berbeda: create mewajibkan field, update menerima subset yang diizinkan. Parse hasil menjadi DTO baru untuk mencegah mass assignment.
+
+## Concept
+
+Fokus penerapan **CRUD Validation** adalah gunakan strict object. Batasi panjang title. Tolak object update kosong. Contoh berikut memperlihatkan konteks kategori CRUD Operations; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan CRUD Validation pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan strict object.
+2. Batasi panjang title.
+3. Tolak object update kosong.
+
+### Contoh terfokus
+
+Jalankan berkas .mjs ini dari root repository agar path import examples sesuai.
+
+```js title="crud-validation.mjs"
+import { z } from "zod";
+export const createNote = z.strictObject({ title: z.string().trim().min(1).max(200) });
+export const updateNote = createNote.partial().refine(value => Object.keys(value).length > 0);
+// ownerId tidak termasuk allowlist dan akan ditolak.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/notes \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Belajar backend"}'
+```
+
+## Code Explanation
+
+Schema create dan update berbeda: create mewajibkan field, update menerima subset yang diizinkan. Parse hasil menjadi DTO baru untuk mencegah mass assignment. Dalam implementasi nyata, batasi panjang title dan tolak object update kosong sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk CRUD Validation, verifikasi langkah “Gunakan strict object” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Batasi panjang title.
+- Batasi hak akses dan data yang dikirim ke client.
+- Tolak object update kosong.
+
+## Testing
+
+Uji CRUD Validation dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan strict object” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Pagination & Filtering](/docs/crud/pagination-and-filtering)
+- [CRUD Operations overview](/docs/crud)
+- [Prisma CRUD](https://www.prisma.io/docs/orm/prisma-client/queries/crud)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Zod — Defining Schemas](https://zod.dev/api)** — Schema runtime, parsing, dan pembatasan field.
+- **Referensi dari [OWASP — Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)** — Allowlist, validasi bentuk, dan makna input.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

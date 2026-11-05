@@ -1,0 +1,106 @@
+---
+title: "Input Validation"
+description: "Input perlu diperiksa bentuk, ukuran, dan maknanya."
+---
+
+## Overview
+
+Input perlu diperiksa bentuk, ukuran, dan maknanya. Validasi format saja tidak memastikan user berhak menggunakan referensi record yang dikirim.
+
+## Concept
+
+Fokus penerapan **Input Validation** adalah allowlist field. Batasi ukuran body. Validasi business invariant di service. Contoh berikut memperlihatkan konteks kategori Security; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Input Validation pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Allowlist field.
+2. Batasi ukuran body.
+3. Validasi business invariant di service.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="input-validation.mjs"
+import { z } from "zod";
+const schema = z.strictObject({ title: z.string().trim().min(1).max(200) });
+console.assert(!schema.safeParse({ title: "Note", role: "admin" }).success);
+```
+
+### Konteks kategori
+
+```js title="safe-compare.mjs"
+import { timingSafeEqual } from "node:crypto";
+export function equalDigest(a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false;
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+## Code Explanation
+
+Input perlu diperiksa bentuk, ukuran, dan maknanya. Validasi format saja tidak memastikan user berhak menggunakan referensi record yang dikirim. Dalam implementasi nyata, batasi ukuran body dan validasi business invariant di service sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Input Validation, verifikasi langkah “Allowlist field” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Batasi ukuran body.
+- Batasi hak akses dan data yang dikirim ke client.
+- Validasi business invariant di service.
+
+## Testing
+
+Uji Input Validation dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “allowlist field” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [SQL Injection Prevention](/docs/security/sql-injection-prevention)
+- [Security overview](/docs/security)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)** — Allowlist, validasi bentuk, dan makna input.
+- **Referensi dari [Zod — Defining Schemas](https://zod.dev/api)** — Schema runtime, parsing, dan pembatasan field.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

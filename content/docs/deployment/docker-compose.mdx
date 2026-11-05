@@ -1,0 +1,114 @@
+---
+title: "Docker Compose"
+description: "Compose mendeskripsikan layanan lokal seperti API dan PostgreSQL."
+---
+
+## Overview
+
+Compose mendeskripsikan layanan lokal seperti API dan PostgreSQL. depends_on biasa tidak menjamin database siap, sehingga gunakan healthcheck dan retry koneksi.
+
+## Concept
+
+Fokus penerapan **Docker Compose** adalah gunakan volume untuk data lokal. Tetapkan healthcheck. Jangan expose database ke jaringan publik. Contoh berikut memperlihatkan konteks kategori Deployment; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Docker Compose pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan volume untuk data lokal.
+2. Tetapkan healthcheck.
+3. Jangan expose database ke jaringan publik.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```yaml title="docker-compose.yaml"
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: handbook
+      POSTGRES_USER: handbook
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run build
+# Atur environment platform, lalu jalankan smoke test setelah deploy.
+```
+
+## Code Explanation
+
+Compose mendeskripsikan layanan lokal seperti API dan PostgreSQL. depends_on biasa tidak menjamin database siap, sehingga gunakan healthcheck dan retry koneksi. Dalam implementasi nyata, tetapkan healthcheck dan jangan expose database ke jaringan publik sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Docker Compose, verifikasi langkah “Gunakan volume untuk data lokal” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tetapkan healthcheck.
+- Batasi hak akses dan data yang dikirim ke client.
+- Jangan expose database ke jaringan publik.
+
+## Testing
+
+Uji Docker Compose dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan volume untuk data lokal” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [CI/CD](/docs/deployment/ci-cd)
+- [Deployment overview](/docs/deployment)
+- [Docker Node.js Guide](https://docs.docker.com/guides/nodejs/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Docker — Compose Documentation](https://docs.docker.com/compose/)** — Konfigurasi layanan, network, dan volume.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

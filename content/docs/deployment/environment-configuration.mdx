@@ -1,0 +1,106 @@
+---
+title: "Environment Configuration"
+description: "Environment production harus divalidasi sebelum menerima traffic."
+---
+
+## Overview
+
+Environment production harus divalidasi sebelum menerima traffic. Pisahkan build-time public configuration dari runtime secret dan hindari fallback credential pada production.
+
+## Concept
+
+Fokus penerapan **Environment Configuration** adalah validasi konfigurasi startup. Pisahkan staging dan production. Jangan mencetak secret saat error. Contoh berikut memperlihatkan konteks kategori Deployment; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Environment Configuration pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Validasi konfigurasi startup.
+2. Pisahkan staging dan production.
+3. Jangan mencetak secret saat error.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="environment-configuration.mjs"
+const origin = new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
+if (process.env.NODE_ENV === "production" && origin.protocol !== "https:") {
+  throw new Error("Production origin harus HTTPS");
+}
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run build
+# Atur environment platform, lalu jalankan smoke test setelah deploy.
+```
+
+## Code Explanation
+
+Environment production harus divalidasi sebelum menerima traffic. Pisahkan build-time public configuration dari runtime secret dan hindari fallback credential pada production. Dalam implementasi nyata, pisahkan staging dan production dan jangan mencetak secret saat error sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Environment Configuration, verifikasi langkah “Validasi konfigurasi startup” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Pisahkan staging dan production.
+- Batasi hak akses dan data yang dikirim ke client.
+- Jangan mencetak secret saat error.
+
+## Testing
+
+Uji Environment Configuration dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “validasi konfigurasi startup” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Docker](/docs/deployment/docker)
+- [Deployment overview](/docs/deployment)
+- [Docker Node.js Guide](https://docs.docker.com/guides/nodejs/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Process API](https://nodejs.org/api/process.html)** — Environment variables, lifecycle, dan signal proses.
+- **Referensi dari [OWASP — Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html)** — Penyimpanan, akses, rotasi, dan lifecycle secret.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

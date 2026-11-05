@@ -1,0 +1,110 @@
+---
+title: "SOLID Principles"
+description: "SOLID membantu mengevaluasi perubahan dan substitusi."
+---
+
+## Overview
+
+SOLID membantu mengevaluasi perubahan dan substitusi. Terapkan berdasarkan tekanan perubahan nyata; abstraksi tanpa kebutuhan dapat menambah kompleksitas.
+
+## Concept
+
+Fokus penerapan **SOLID Principles** adalah pisahkan alasan perubahan. Gunakan interface kecil. Inject dependensi yang bervariasi. Contoh berikut memperlihatkan konteks kategori Architecture & Best Practices; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan SOLID Principles pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pisahkan alasan perubahan.
+2. Gunakan interface kecil.
+3. Inject dependensi yang bervariasi.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="solid-principles.mjs"
+// Service bergantung pada kemampuan send, bukan provider tertentu.
+export const notify = sender => async message => sender.send(message);
+const fake = { async send(message) { return { accepted: Boolean(message) }; } };
+console.assert((await notify(fake)("Hello")).accepted);
+```
+
+### Konteks kategori
+
+```js title="notes.service.mjs"
+export function createNoteService(repository) {
+  return {
+    async findForUser(id, actor) {
+      const note = await repository.findById(id);
+      return note?.ownerId === actor.id ? note : null;
+    },
+  };
+}
+```
+
+## Code Explanation
+
+SOLID membantu mengevaluasi perubahan dan substitusi. Terapkan berdasarkan tekanan perubahan nyata; abstraksi tanpa kebutuhan dapat menambah kompleksitas. Dalam implementasi nyata, gunakan interface kecil dan inject dependensi yang bervariasi sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk SOLID Principles, verifikasi langkah “Pisahkan alasan perubahan” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Gunakan interface kecil.
+- Batasi hak akses dan data yang dikirim ke client.
+- Inject dependensi yang bervariasi.
+
+## Testing
+
+Uji SOLID Principles dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pisahkan alasan perubahan” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Separation of Concerns](/docs/architecture/separation-of-concerns)
+- [Architecture & Best Practices overview](/docs/architecture)
+- [Node.js Learn](https://nodejs.org/en/learn)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Robert C. Martin — The Open-Closed Principle](https://blog.cleancoder.com/uncle-bob/2014/05/12/TheOpenClosedPrinciple.html)** — Penjelasan prinsip open-closed sebagai salah satu prinsip SOLID.
+- **Referensi dari [Martin Fowler — Dependency Injection](https://martinfowler.com/articles/injection.html)** — Pemisahan konfigurasi dependensi dari penggunaan.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

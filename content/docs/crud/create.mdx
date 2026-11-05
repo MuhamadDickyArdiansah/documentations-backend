@@ -1,0 +1,128 @@
+---
+title: "Create"
+description: "Create perlu menjaga constraint unik dan membedakan data input dari field yang dikelola server."
+---
+
+## Overview
+
+Create perlu menjaga constraint unik dan membedakan data input dari field yang dikelola server. ownerId selalu diambil dari identitas actor.
+
+## Concept
+
+Fokus penerapan **Create** adalah parse request schema. Tetapkan ownerId di server. Return 201 dan resource yang dibuat. Contoh berikut memperlihatkan konteks kategori CRUD Operations; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Create pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Parse request schema.
+2. Tetapkan ownerId di server.
+3. Return 201 dan resource yang dibuat.
+
+### Contoh terfokus
+
+Jalankan berkas .mjs ini dari root repository agar path import examples sesuai.
+
+```js title="create.mjs"
+import { createNoteRepository } from "./examples/crud/repository.mjs";
+const repository = createNoteRepository();
+const note = repository.create("u1", "Backend");
+console.assert(note.ownerId === "u1");
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/notes \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Belajar backend"}'
+```
+
+## Code Explanation
+
+Create perlu menjaga constraint unik dan membedakan data input dari field yang dikelola server. ownerId selalu diambil dari identitas actor. Dalam implementasi nyata, tetapkan ownerid di server dan return 201 dan resource yang dibuat sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Create, verifikasi langkah “Parse request schema” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tetapkan ownerId di server.
+- Batasi hak akses dan data yang dikirim ke client.
+- Return 201 dan resource yang dibuat.
+
+## Testing
+
+Uji Create dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “parse request schema” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Read](/docs/crud/read)
+- [CRUD Operations overview](/docs/crud)
+- [Prisma CRUD](https://www.prisma.io/docs/orm/prisma-client/queries/crud)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Routing Guide](https://expressjs.com/en/guide/routing/)** — Route, router, dan pemetaan endpoint HTTP.
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

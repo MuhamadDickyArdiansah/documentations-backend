@@ -1,0 +1,17 @@
+{
+  "title": "Node.js",
+  "icon": "Hexagon",
+  "pages": [
+    "index",
+    "introduction-to-node-js",
+    "node-js-architecture",
+    "event-loop",
+    "npm",
+    "environment-variables",
+    "file-system",
+    "http-module",
+    "error-handling",
+    "package-management"
+  ],
+  "defaultOpen": false
+}

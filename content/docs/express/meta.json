@@ -1,0 +1,21 @@
+{
+  "title": "Express.js",
+  "icon": "Route",
+  "pages": [
+    "index",
+    "express-introduction",
+    "project-setup",
+    "application-structure",
+    "routing",
+    "middleware",
+    "controllers",
+    "services",
+    "repository-pattern",
+    "request-and-response",
+    "error-handling",
+    "validation",
+    "logging",
+    "api-architecture"
+  ],
+  "defaultOpen": false
+}

@@ -1,0 +1,110 @@
+---
+title: "Background Jobs"
+description: "Queue memisahkan pekerjaan lambat dari request."
+---
+
+## Overview
+
+Queue memisahkan pekerjaan lambat dari request. Kebanyakan queue menyediakan at-least-once delivery, sehingga handler harus aman ketika job dijalankan ulang.
+
+## Concept
+
+Fokus penerapan **Background Jobs** adalah tentukan retry dengan backoff. Buat job idempotent. Pantau dead-letter queue. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Background Jobs pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tentukan retry dengan backoff.
+2. Buat job idempotent.
+3. Pantau dead-letter queue.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="background-jobs.mjs"
+export async function processEmail(job, sender, processed) {
+  // processed adalah adapter persisten; reserve+send memerlukan desain idempotency provider.
+  if (await processed.has(job.id)) return;
+  await sender.send({ ...job.payload, idempotencyKey: job.id });
+  await processed.mark(job.id);
+}
+// Gunakan retry backoff dan dead-letter queue. Mark saja tidak menjamin exactly-once.
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+Queue memisahkan pekerjaan lambat dari request. Kebanyakan queue menyediakan at-least-once delivery, sehingga handler harus aman ketika job dijalankan ulang. Dalam implementasi nyata, buat job idempotent dan pantau dead-letter queue sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Background Jobs, verifikasi langkah “Tentukan retry dengan backoff” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Buat job idempotent.
+- Batasi hak akses dan data yang dikirim ke client.
+- Pantau dead-letter queue.
+
+## Testing
+
+Uji Background Jobs dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tentukan retry dengan backoff” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Scheduled Tasks](/docs/advanced/scheduled-tasks)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [BullMQ — Official Documentation](https://docs.bullmq.io/)** — Queue, retry, jobs, dan pola background processing.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,107 @@
+---
+title: "PostgreSQL"
+description: "PostgreSQL menyediakan transaksi, constraint, JSONB, dan index yang beragam."
+---
+
+## Overview
+
+PostgreSQL menyediakan transaksi, constraint, JSONB, dan index yang beragam. Gunakan connection pooling dan role database dengan hak minimum.
+
+## Concept
+
+Fokus penerapan **PostgreSQL** adalah buat database development terpisah. Konfigurasi connection limit. Jangan gunakan superuser pada aplikasi. Contoh berikut memperlihatkan konteks kategori Database; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai PostgreSQL. Jalankan SQL pada database development melalui psql atau SQL editor.
+
+## Project Structure
+
+Simpan latihan PostgreSQL pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Buat database development terpisah.
+2. Konfigurasi connection limit.
+3. Jangan gunakan superuser pada aplikasi.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```bash title="postgresql.bash"
+psql "$DATABASE_URL" -c "SELECT current_database(), current_user;"
+# DATABASE_URL berasal dari environment, bukan disimpan pada source.
+```
+
+### Konteks kategori
+
+```sql title="schema.sql"
+CREATE TABLE notes (
+  id uuid PRIMARY KEY,
+  owner_id uuid NOT NULL,
+  title varchar(200) NOT NULL CHECK (length(title) > 0),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX notes_owner_created_idx ON notes(owner_id, created_at DESC, id);
+```
+
+## Code Explanation
+
+PostgreSQL menyediakan transaksi, constraint, JSONB, dan index yang beragam. Gunakan connection pooling dan role database dengan hak minimum. Dalam implementasi nyata, konfigurasi connection limit dan jangan gunakan superuser pada aplikasi sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk PostgreSQL, verifikasi langkah “Buat database development terpisah” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Konfigurasi connection limit.
+- Batasi hak akses dan data yang dikirim ke client.
+- Jangan gunakan superuser pada aplikasi.
+
+## Testing
+
+Uji PostgreSQL dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “buat database development terpisah” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Database Design](/docs/database/database-design)
+- [Database overview](/docs/database)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/current/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [PostgreSQL — Official Documentation](https://www.postgresql.org/docs/current/)** — Model relasional, SQL, dan operasi database.
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

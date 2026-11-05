@@ -1,0 +1,108 @@
+---
+title: "Development Environment"
+description: "Lingkungan pengembangan yang konsisten mengurangi perbedaan perilaku antar komputer."
+---
+
+## Overview
+
+Lingkungan pengembangan yang konsisten mengurangi perbedaan perilaku antar komputer. Simpan versi runtime, lockfile, dan konfigurasi editor bersama project.
+
+## Concept
+
+Fokus penerapan **Development Environment** adalah pasang Node.js dan Git. Aktifkan format saat menyimpan. Pisahkan konfigurasi lokal dari secret production. Contoh berikut memperlihatkan konteks kategori Getting Started; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Pemahaman dasar fungsi JavaScript dan object JSON.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Development Environment pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pasang Node.js dan Git.
+2. Aktifkan format saat menyimpan.
+3. Pisahkan konfigurasi lokal dari secret production.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```bash title="development-environment.bash"
+node --version
+npm --version
+git --version
+# Jalankan dari repository:
+npm ci
+npm run dev
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+node --version
+npm --version
+npm init -y
+npm install express
+```
+
+## Code Explanation
+
+Lingkungan pengembangan yang konsisten mengurangi perbedaan perilaku antar komputer. Simpan versi runtime, lockfile, dan konfigurasi editor bersama project. Dalam implementasi nyata, aktifkan format saat menyimpan dan pisahkan konfigurasi lokal dari secret production sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Development Environment, verifikasi langkah “Pasang Node.js dan Git” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Aktifkan format saat menyimpan.
+- Batasi hak akses dan data yang dikirim ke client.
+- Pisahkan konfigurasi lokal dari secret production.
+
+## Testing
+
+Uji Development Environment dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pasang node.js dan git” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Node.js Installation](/docs/getting-started/node-js-installation)
+- [Getting Started overview](/docs/getting-started)
+- [Node.js Learn](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Download dan Installation](https://nodejs.org/en/download)** — Instalasi runtime dari distribusi resmi.
+- **Referensi dari [npm — npm ci](https://docs.npmjs.com/cli/v11/commands/npm-ci/)** — Instalasi deterministik dari lockfile.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

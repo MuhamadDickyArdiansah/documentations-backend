@@ -1,0 +1,107 @@
+---
+title: "Token Security"
+description: "Token adalah credential dan harus diperlakukan seperti password selama valid."
+---
+
+## Overview
+
+Token adalah credential dan harus diperlakukan seperti password selama valid. Payload JWT dapat dibaca; jangan simpan secret atau data sensitif di dalamnya.
+
+## Concept
+
+Fokus penerapan **Token Security** adalah gunakan TLS. Redact token dari log. Rotasi key dan tetapkan umur pendek. Contoh berikut memperlihatkan konteks kategori Security; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Token Security pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan TLS.
+2. Redact token dari log.
+3. Rotasi key dan tetapkan umur pendek.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="token-security.mjs"
+import { randomBytes, createHash } from "node:crypto";
+const token = randomBytes(32).toString("base64url");
+const hash = createHash("sha256").update(token).digest("hex");
+// Simpan hash + expiry pada server, kirim token sekali melalui saluran aman.
+```
+
+### Konteks kategori
+
+```js title="safe-compare.mjs"
+import { timingSafeEqual } from "node:crypto";
+export function equalDigest(a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false;
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+## Code Explanation
+
+Token adalah credential dan harus diperlakukan seperti password selama valid. Payload JWT dapat dibaca; jangan simpan secret atau data sensitif di dalamnya. Dalam implementasi nyata, redact token dari log dan rotasi key dan tetapkan umur pendek sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Token Security, verifikasi langkah “Gunakan TLS” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Redact token dari log.
+- Batasi hak akses dan data yang dikirim ke client.
+- Rotasi key dan tetapkan umur pendek.
+
+## Testing
+
+Uji Token Security dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan tls” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Secret Management](/docs/security/secret-management)
+- [Security overview](/docs/security)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [IETF — RFC 7519: JSON Web Token](https://www.rfc-editor.org/rfc/rfc7519)** — Format token dan makna klaim JWT.
+- **Referensi dari [OWASP — Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)** — Penyimpanan sesi, expiry, cookie, serta pencabutan sesi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

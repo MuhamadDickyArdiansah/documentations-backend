@@ -1,0 +1,108 @@
+---
+title: "Dependency Injection"
+description: "Dependency injection berarti menyerahkan dependensi dari luar."
+---
+
+## Overview
+
+Dependency injection berarti menyerahkan dependensi dari luar. Factory function sering cukup untuk aplikasi Node tanpa container atau decorator tambahan.
+
+## Concept
+
+Fokus penerapan **Dependency Injection** adalah terima dependensi lewat parameter. Rakit di entry point. Gunakan fake pada test. Contoh berikut memperlihatkan konteks kategori Architecture & Best Practices; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Dependency Injection pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Terima dependensi lewat parameter.
+2. Rakit di entry point.
+3. Gunakan fake pada test.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="dependency-injection.mjs"
+export const createClockService = clock => ({ now: () => clock() });
+const fixed = createClockService(() => new Date("2026-01-01T00:00:00Z"));
+console.assert(fixed.now().getUTCFullYear() === 2026);
+```
+
+### Konteks kategori
+
+```js title="notes.service.mjs"
+export function createNoteService(repository) {
+  return {
+    async findForUser(id, actor) {
+      const note = await repository.findById(id);
+      return note?.ownerId === actor.id ? note : null;
+    },
+  };
+}
+```
+
+## Code Explanation
+
+Dependency injection berarti menyerahkan dependensi dari luar. Factory function sering cukup untuk aplikasi Node tanpa container atau decorator tambahan. Dalam implementasi nyata, rakit di entry point dan gunakan fake pada test sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Dependency Injection, verifikasi langkah “Terima dependensi lewat parameter” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Rakit di entry point.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan fake pada test.
+
+## Testing
+
+Uji Dependency Injection dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “terima dependensi lewat parameter” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Error Handling Standards](/docs/architecture/error-handling-standards)
+- [Architecture & Best Practices overview](/docs/architecture)
+- [Node.js Learn](https://nodejs.org/en/learn)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Martin Fowler — Dependency Injection](https://martinfowler.com/articles/injection.html)** — Pemisahan konfigurasi dependensi dari penggunaan.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

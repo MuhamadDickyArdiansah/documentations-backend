@@ -1,0 +1,117 @@
+---
+title: "Repository Pattern"
+description: "Repository menyatakan operasi penyimpanan dalam bahasa domain."
+---
+
+## Overview
+
+Repository menyatakan operasi penyimpanan dalam bahasa domain. Implementasi in-memory berguna untuk unit test, tetapi tetap perlu integration test untuk SQL nyata.
+
+## Concept
+
+Fokus penerapan **Repository Pattern** adalah buat interface minimal. Hindari bocor ORM query object. Uji adapter database secara terpisah. Contoh berikut memperlihatkan konteks kategori Architecture & Best Practices; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Repository Pattern pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Buat interface minimal.
+2. Hindari bocor ORM query object.
+3. Uji adapter database secara terpisah.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="repository-pattern.mjs"
+import { randomUUID } from 'node:crypto';
+// In-memory adapter for learning. Replace with transactional persistent storage before deployment.
+export function createNoteRepository() {
+  const rows = new Map();
+  return {
+    create(ownerId, title) { const note = { id: randomUUID(), ownerId, title }; rows.set(note.id, note); return { ...note }; },
+    list(ownerId, offset = 0, limit = 20) { return [...rows.values()].filter(row => row.ownerId === ownerId).slice(offset, offset + limit).map(row => ({ ...row })); },
+    find(id, ownerId) { const row = rows.get(id); return row?.ownerId === ownerId ? { ...row } : null; },
+    update(id, ownerId, title) { const row = rows.get(id); if (row?.ownerId !== ownerId) return null; row.title = title; return { ...row }; },
+    delete(id, ownerId) { const row = rows.get(id); return row?.ownerId === ownerId ? rows.delete(id) : false; },
+  };
+}
+```
+
+### Konteks kategori
+
+```js title="notes.service.mjs"
+export function createNoteService(repository) {
+  return {
+    async findForUser(id, actor) {
+      const note = await repository.findById(id);
+      return note?.ownerId === actor.id ? note : null;
+    },
+  };
+}
+```
+
+## Code Explanation
+
+Repository menyatakan operasi penyimpanan dalam bahasa domain. Implementasi in-memory berguna untuk unit test, tetapi tetap perlu integration test untuk SQL nyata. Dalam implementasi nyata, hindari bocor orm query object dan uji adapter database secara terpisah sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Repository Pattern, verifikasi langkah “Buat interface minimal” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Hindari bocor ORM query object.
+- Batasi hak akses dan data yang dikirim ke client.
+- Uji adapter database secara terpisah.
+
+## Testing
+
+Uji Repository Pattern dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “buat interface minimal” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Dependency Injection](/docs/architecture/dependency-injection)
+- [Architecture & Best Practices overview](/docs/architecture)
+- [Node.js Learn](https://nodejs.org/en/learn)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Martin Fowler — Repository](https://martinfowler.com/eaaCatalog/repository.html)** — Abstraksi akses persistence dalam bahasa domain.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

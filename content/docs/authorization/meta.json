@@ -1,0 +1,16 @@
+{
+  "title": "Authorization",
+  "icon": "ShieldCheck",
+  "pages": [
+    "index",
+    "authorization-fundamentals",
+    "role-based-access-control",
+    "permission-based-access-control",
+    "resource-ownership",
+    "protected-routes",
+    "authorization-middleware",
+    "role-and-permission-schema",
+    "admin-user-permissions"
+  ],
+  "defaultOpen": false
+}

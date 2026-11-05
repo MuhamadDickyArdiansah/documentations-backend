@@ -1,0 +1,124 @@
+---
+title: "Rate Limiting"
+description: "Rate limit membatasi penggunaan resource per identitas atau IP."
+---
+
+## Overview
+
+Rate limit membatasi penggunaan resource per identitas atau IP. Counter dalam memory hanya berlaku pada satu proses; deployment multi-instance memerlukan shared store.
+
+## Concept
+
+Fokus penerapan **Rate Limiting** adalah gunakan limiter umum dan limiter login. Kirim Retry-After. Konfigurasi trust proxy sesuai infrastruktur. Contoh berikut memperlihatkan konteks kategori REST API; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Rate Limiting pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan limiter umum dan limiter login.
+2. Kirim Retry-After.
+3. Konfigurasi trust proxy sesuai infrastruktur.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="rate-limiting.mjs"
+import { rateLimit } from "express-rate-limit";
+export const loginLimiter = rateLimit({
+  windowMs: 15 * 60_000, limit: 30,
+  standardHeaders: "draft-8", legacyHeaders: false,
+});
+// app.use("/api/auth/login", loginLimiter); satu proses saja.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i http://localhost:4000/health
+# HTTP 200
+# {"data":{"status":"ok"}}
+```
+
+## Code Explanation
+
+Rate limit membatasi penggunaan resource per identitas atau IP. Counter dalam memory hanya berlaku pada satu proses; deployment multi-instance memerlukan shared store. Dalam implementasi nyata, kirim retry-after dan konfigurasi trust proxy sesuai infrastruktur sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Rate Limiting, verifikasi langkah “Gunakan limiter umum dan limiter login” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Kirim Retry-After.
+- Batasi hak akses dan data yang dikirim ke client.
+- Konfigurasi trust proxy sesuai infrastruktur.
+
+## Testing
+
+Uji Rate Limiting dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan limiter umum dan limiter login” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [OpenAPI / Swagger](/docs/rest-api/openapi-swagger)
+- [REST API overview](/docs/rest-api)
+- [HTTP Semantics — RFC 9110](https://www.rfc-editor.org/rfc/rfc9110)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [express-rate-limit — Overview](https://express-rate-limit.mintlify.app/overview)** — Konfigurasi limiter dan dukungan penyimpanan counter.
+- **Referensi dari [OWASP — REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)** — Kontrol keamanan pada endpoint dan data API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

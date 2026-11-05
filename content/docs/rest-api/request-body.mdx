@@ -1,0 +1,122 @@
+---
+title: "Request Body"
+description: "Content-Type menentukan cara membaca body."
+---
+
+## Overview
+
+Content-Type menentukan cara membaca body. Request JSON perlu ukuran maksimum dan schema yang menolak bentuk data tak terduga.
+
+## Concept
+
+Fokus penerapan **Request Body** adalah pasang express.json dengan limit. Tolak array jika object diharapkan. Parse schema sebelum service. Contoh berikut memperlihatkan konteks kategori REST API; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Request Body pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pasang express.json dengan limit.
+2. Tolak array jika object diharapkan.
+3. Parse schema sebelum service.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="request-body.mjs"
+import express from "express";
+const app = express();
+app.use(express.json({ limit: "16kb", strict: true }));
+// Daftarkan router setelah parser, error handler setelah router.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i http://localhost:4000/health
+# HTTP 200
+# {"data":{"status":"ok"}}
+```
+
+## Code Explanation
+
+Content-Type menentukan cara membaca body. Request JSON perlu ukuran maksimum dan schema yang menolak bentuk data tak terduga. Dalam implementasi nyata, tolak array jika object diharapkan dan parse schema sebelum service sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Request Body, verifikasi langkah “Pasang express.json dengan limit” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tolak array jika object diharapkan.
+- Batasi hak akses dan data yang dikirim ke client.
+- Parse schema sebelum service.
+
+## Testing
+
+Uji Request Body dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pasang express.json dengan limit” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [API Response Format](/docs/rest-api/api-response-format)
+- [REST API overview](/docs/rest-api)
+- [HTTP Semantics — RFC 9110](https://www.rfc-editor.org/rfc/rfc9110)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — API Reference](https://expressjs.com/en/api/)** — Kontrak API aplikasi, request, response, dan router.
+- **Referensi dari [OWASP — Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)** — Allowlist, validasi bentuk, dan makna input.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

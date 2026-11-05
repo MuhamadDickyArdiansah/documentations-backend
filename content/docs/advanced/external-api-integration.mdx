@@ -1,0 +1,110 @@
+---
+title: "External API Integration"
+description: "Dependensi eksternal memiliki latency dan kegagalan terpisah."
+---
+
+## Overview
+
+Dependensi eksternal memiliki latency dan kegagalan terpisah. Timeout, retry terbatas, dan circuit breaker mencegah satu provider melumpuhkan seluruh aplikasi.
+
+## Concept
+
+Fokus penerapan **External API Integration** adalah gunakan AbortSignal.timeout. Retry hanya operasi yang aman. Validasi response provider. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan External API Integration pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan AbortSignal.timeout.
+2. Retry hanya operasi yang aman.
+3. Validasi response provider.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="external-api-integration.mjs"
+export async function providerJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider failed: ${response.status}`);
+  return response.json();
+}
+// url dari konfigurasi allowlist server; validasi schema response.
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+Dependensi eksternal memiliki latency dan kegagalan terpisah. Timeout, retry terbatas, dan circuit breaker mencegah satu provider melumpuhkan seluruh aplikasi. Dalam implementasi nyata, retry hanya operasi yang aman dan validasi response provider sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk External API Integration, verifikasi langkah “Gunakan AbortSignal.timeout” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Retry hanya operasi yang aman.
+- Batasi hak akses dan data yang dikirim ke client.
+- Validasi response provider.
+
+## Testing
+
+Uji External API Integration dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan abortsignal.timeout” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Audit Logging](/docs/advanced/audit-logging)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Global Objects](https://nodejs.org/api/globals.html)** — Fetch, AbortSignal, dan primitive runtime.
+- **Referensi dari [IETF — RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110)** — Semantik method, status code, header, dan representasi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

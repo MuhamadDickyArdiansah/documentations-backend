@@ -1,0 +1,20 @@
+{
+  "title": "Security",
+  "icon": "LockKeyhole",
+  "pages": [
+    "index",
+    "security-fundamentals",
+    "password-security",
+    "cors",
+    "helmet-and-security-headers",
+    "rate-limiting",
+    "input-validation",
+    "sql-injection-prevention",
+    "xss-prevention",
+    "csrf-protection",
+    "token-security",
+    "secret-management",
+    "secure-file-upload"
+  ],
+  "defaultOpen": false
+}

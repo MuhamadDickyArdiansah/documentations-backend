@@ -1,0 +1,113 @@
+---
+title: "Redis Caching"
+description: "Cache-aside membaca cache lalu database ketika miss."
+---
+
+## Overview
+
+Cache-aside membaca cache lalu database ketika miss. TTL membatasi stale data, tetapi invalidasi setelah write tetap dibutuhkan jika konsistensi lebih ketat.
+
+## Concept
+
+Fokus penerapan **Redis Caching** adalah gunakan key berversi. Tetapkan TTL. Hindari cache error sebagai data sukses. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Redis Caching pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan key berversi.
+2. Tetapkan TTL.
+3. Hindari cache error sebagai data sukses.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="redis-caching.mjs"
+// Dependency: npm install redis pada project latihan terpisah.
+import { createClient } from "redis";
+const client = createClient({ url: process.env.REDIS_URL });
+client.on("error", () => console.error("Redis unavailable"));
+await client.connect();
+try {
+  await client.setEx("example:v1:status", 60, JSON.stringify({ ready: true }));
+  const value = await client.get("example:v1:status");
+  console.log(value ? JSON.parse(value) : null);
+} finally { await client.close(); }
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+Cache-aside membaca cache lalu database ketika miss. TTL membatasi stale data, tetapi invalidasi setelah write tetap dibutuhkan jika konsistensi lebih ketat. Dalam implementasi nyata, tetapkan ttl dan hindari cache error sebagai data sukses sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Redis Caching, verifikasi langkah “Gunakan key berversi” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tetapkan TTL.
+- Batasi hak akses dan data yang dikirim ke client.
+- Hindari cache error sebagai data sukses.
+
+## Testing
+
+Uji Redis Caching dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan key berversi” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Background Jobs](/docs/advanced/background-jobs)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Redis — Develop with Redis](https://redis.io/docs/latest/develop/)** — Cache, TTL, data structures, dan client.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

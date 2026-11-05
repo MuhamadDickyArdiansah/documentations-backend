@@ -1,0 +1,40 @@
+---
+title: "Advanced Backend"
+description: "Pelajari Advanced Backend melalui 11 topik yang terstruktur, dari konsep hingga praktik."
+icon: Workflow
+---
+
+## Tentang kategori ini
+
+Upload besar sebaiknya mengalir sebagai stream atau langsung ke object storage dengan signed URL. Buffer seluruh file dapat menghabiskan memory server.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="File Upload" href="/docs/advanced/file-upload">Upload besar sebaiknya mengalir sebagai stream atau langsung ke object storage dengan signed URL.</Card>
+<Card title="Email Service" href="/docs/advanced/email-service">Email merupakan efek samping yang dapat gagal atau terkirim ganda.</Card>
+<Card title="Redis Caching" href="/docs/advanced/redis-caching">Cache-aside membaca cache lalu database ketika miss.</Card>
+<Card title="Background Jobs" href="/docs/advanced/background-jobs">Queue memisahkan pekerjaan lambat dari request.</Card>
+<Card title="Scheduled Tasks" href="/docs/advanced/scheduled-tasks">Scheduler multi-instance dapat menjalankan tugas yang sama beberapa kali.</Card>
+<Card title="WebSockets" href="/docs/advanced/websockets">WebSocket mempertahankan koneksi dua arah.</Card>
+<Card title="Notifications" href="/docs/advanced/notifications">Notifikasi memisahkan event domain dari saluran pengiriman.</Card>
+<Card title="Webhooks" href="/docs/advanced/webhooks">Webhook adalah request dari layanan lain yang harus diverifikasi sebelum diproses.</Card>
+<Card title="External API Integration" href="/docs/advanced/external-api-integration">Dependensi eksternal memiliki latency dan kegagalan terpisah.</Card>
+<Card title="Audit Logging" href="/docs/advanced/audit-logging">Audit log menjelaskan siapa melakukan apa terhadap resource dan kapan.</Card>
+<Card title="Idempotency" href="/docs/advanced/idempotency">Idempotency key menghubungkan retry ke satu hasil operasi.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — API Documentation](https://nodejs.org/api/)** — API runtime dan perilaku module bawaan Node.js.
+- **Referensi dari [OWASP — REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)** — Kontrol keamanan pada endpoint dan data API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

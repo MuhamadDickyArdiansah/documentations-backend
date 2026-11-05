@@ -1,0 +1,136 @@
+---
+title: "CRUD Introduction"
+description: "CRUD menerjemahkan lifecycle resource menjadi create, read, update, dan delete."
+---
+
+## Overview
+
+CRUD menerjemahkan lifecycle resource menjadi create, read, update, dan delete. Setiap operasi harus memiliki validasi, authorization, dan perilaku error yang terdokumentasi.
+
+## Concept
+
+Fokus penerapan **CRUD Introduction** adalah tentukan schema resource. Definisikan kontrak endpoint. Uji setiap operasi dengan pengguna berbeda. Contoh berikut memperlihatkan konteks kategori CRUD Operations; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan CRUD Introduction pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tentukan schema resource.
+2. Definisikan kontrak endpoint.
+3. Uji setiap operasi dengan pengguna berbeda.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="crud-introduction.mjs"
+import { randomUUID } from 'node:crypto';
+// In-memory adapter for learning. Replace with transactional persistent storage before deployment.
+export function createNoteRepository() {
+  const rows = new Map();
+  return {
+    create(ownerId, title) { const note = { id: randomUUID(), ownerId, title }; rows.set(note.id, note); return { ...note }; },
+    list(ownerId, offset = 0, limit = 20) { return [...rows.values()].filter(row => row.ownerId === ownerId).slice(offset, offset + limit).map(row => ({ ...row })); },
+    find(id, ownerId) { const row = rows.get(id); return row?.ownerId === ownerId ? { ...row } : null; },
+    update(id, ownerId, title) { const row = rows.get(id); if (row?.ownerId !== ownerId) return null; row.title = title; return { ...row }; },
+    delete(id, ownerId) { const row = rows.get(id); return row?.ownerId === ownerId ? rows.delete(id) : false; },
+  };
+}
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/notes \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Belajar backend"}'
+```
+
+## Code Explanation
+
+CRUD menerjemahkan lifecycle resource menjadi create, read, update, dan delete. Setiap operasi harus memiliki validasi, authorization, dan perilaku error yang terdokumentasi. Dalam implementasi nyata, definisikan kontrak endpoint dan uji setiap operasi dengan pengguna berbeda sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk CRUD Introduction, verifikasi langkah “Tentukan schema resource” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Definisikan kontrak endpoint.
+- Batasi hak akses dan data yang dikirim ke client.
+- Uji setiap operasi dengan pengguna berbeda.
+
+## Testing
+
+Uji CRUD Introduction dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tentukan schema resource” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Create](/docs/crud/create)
+- [CRUD Operations overview](/docs/crud)
+- [Prisma CRUD](https://www.prisma.io/docs/orm/prisma-client/queries/crud)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Routing Guide](https://expressjs.com/en/guide/routing/)** — Route, router, dan pemetaan endpoint HTTP.
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

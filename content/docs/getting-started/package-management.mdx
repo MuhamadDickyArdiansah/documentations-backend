@@ -1,0 +1,103 @@
+---
+title: "Package Management"
+description: "package.json menjelaskan scripts dan dependensi; lockfile mengunci resolusi versi."
+---
+
+## Overview
+
+package.json menjelaskan scripts dan dependensi; lockfile mengunci resolusi versi. Gunakan satu package manager per repository agar hasil instalasi konsisten.
+
+## Concept
+
+Fokus penerapan **Package Management** adalah jalankan npm init -y. Pasang dependensi dengan npm install. Gunakan npm ci dalam CI. Contoh berikut memperlihatkan konteks kategori Getting Started; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Pemahaman dasar fungsi JavaScript dan object JSON.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Package Management pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Jalankan npm init -y.
+2. Pasang dependensi dengan npm install.
+3. Gunakan npm ci dalam CI.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```json title="package-management.json"
+{"type":"module","scripts":{"dev":"node --watch app.mjs","start":"node app.mjs"},"dependencies":{"express":"^5.0.0"}}
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+node --version
+npm --version
+npm init -y
+npm install express
+```
+
+## Code Explanation
+
+package.json menjelaskan scripts dan dependensi; lockfile mengunci resolusi versi. Gunakan satu package manager per repository agar hasil instalasi konsisten. Dalam implementasi nyata, pasang dependensi dengan npm install dan gunakan npm ci dalam ci sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Package Management, verifikasi langkah “Jalankan npm init -y” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Pasang dependensi dengan npm install.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan npm ci dalam CI.
+
+## Testing
+
+Uji Package Management dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “jalankan npm init -y” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [First Backend Application](/docs/getting-started/first-backend-application)
+- [Getting Started overview](/docs/getting-started)
+- [Node.js Learn](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [npm — npm ci](https://docs.npmjs.com/cli/v11/commands/npm-ci/)** — Instalasi deterministik dari lockfile.
+- **Referensi dari [Node.js — ECMAScript Modules](https://nodejs.org/api/esm.html)** — Import, export, resolusi file, dan perilaku ESM.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,113 @@
+---
+title: "Separation of Concerns"
+description: "Setiap bagian kode perlu memiliki tanggung jawab yang jelas."
+---
+
+## Overview
+
+Setiap bagian kode perlu memiliki tanggung jawab yang jelas. Parsing HTTP, aturan bisnis, query, dan logging memiliki alasan perubahan yang berbeda.
+
+## Concept
+
+Fokus penerapan **Separation of Concerns** adalah pisahkan validation dan bisnis. Tempatkan logging di boundary. Hindari module utilitas serba guna. Contoh berikut memperlihatkan konteks kategori Architecture & Best Practices; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Separation of Concerns pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pisahkan validation dan bisnis.
+2. Tempatkan logging di boundary.
+3. Hindari module utilitas serba guna.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="separation-of-concerns.mjs"
+export const normalizeTitle = value => value.trim();
+export const validateTitle = value => value.length > 0 && value.length <= 200;
+export async function saveTitle(repository, actor, input) {
+  const title = normalizeTitle(input);
+  if (!validateTitle(title)) throw new Error("Title tidak valid");
+  return repository.create(actor.id, title);
+}
+```
+
+### Konteks kategori
+
+```js title="notes.service.mjs"
+export function createNoteService(repository) {
+  return {
+    async findForUser(id, actor) {
+      const note = await repository.findById(id);
+      return note?.ownerId === actor.id ? note : null;
+    },
+  };
+}
+```
+
+## Code Explanation
+
+Setiap bagian kode perlu memiliki tanggung jawab yang jelas. Parsing HTTP, aturan bisnis, query, dan logging memiliki alasan perubahan yang berbeda. Dalam implementasi nyata, tempatkan logging di boundary dan hindari module utilitas serba guna sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Separation of Concerns, verifikasi langkah “Pisahkan validation dan bisnis” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tempatkan logging di boundary.
+- Batasi hak akses dan data yang dikirim ke client.
+- Hindari module utilitas serba guna.
+
+## Testing
+
+Uji Separation of Concerns dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pisahkan validation dan bisnis” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Service Pattern](/docs/architecture/service-pattern)
+- [Architecture & Best Practices overview](/docs/architecture)
+- [Node.js Learn](https://nodejs.org/en/learn)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [E. W. Dijkstra — On the Role of Scientific Thought](https://www.cs.utexas.edu/~EWD/transcriptions/EWD04xx/EWD447.html)** — Sumber awal pembahasan separation of concerns.
+- **Referensi dari [Robert C. Martin — The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)** — Aturan dependensi dan pemisahan domain dari infrastruktur.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

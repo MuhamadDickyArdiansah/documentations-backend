@@ -1,0 +1,107 @@
+---
+title: "Node.js Architecture"
+description: "JavaScript berjalan pada thread utama."
+---
+
+## Overview
+
+JavaScript berjalan pada thread utama. Sebagian operasi filesystem dan crypto menggunakan thread pool libuv, sedangkan network I/O umumnya memakai fasilitas sistem operasi.
+
+## Concept
+
+Fokus penerapan **Node.js Architecture** adalah pisahkan tugas CPU dan I/O. Ukur event loop lag. Gunakan worker_threads untuk komputasi berat. Contoh berikut memperlihatkan konteks kategori Node.js; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Node.js Architecture pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pisahkan tugas CPU dan I/O.
+2. Ukur event loop lag.
+3. Gunakan worker_threads untuk komputasi berat.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="node-js-architecture.mjs"
+import { availableParallelism } from "node:os";
+console.log({ logicalParallelism: availableParallelism() });
+// Ini kapasitas yang tersedia, bukan jumlah request yang dapat ditangani.
+```
+
+### Konteks kategori
+
+```js title="server.mjs"
+import { createServer } from "node:http";
+const server = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ data: { status: "ok" } }));
+});
+server.listen(4000, "127.0.0.1");
+```
+
+## Code Explanation
+
+JavaScript berjalan pada thread utama. Sebagian operasi filesystem dan crypto menggunakan thread pool libuv, sedangkan network I/O umumnya memakai fasilitas sistem operasi. Dalam implementasi nyata, ukur event loop lag dan gunakan worker_threads untuk komputasi berat sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Node.js Architecture, verifikasi langkah “Pisahkan tugas CPU dan I/O” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Ukur event loop lag.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan worker_threads untuk komputasi berat.
+
+## Testing
+
+Uji Node.js Architecture dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pisahkan tugas cpu dan i/o” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Event Loop](/docs/nodejs/event-loop)
+- [Node.js overview](/docs/nodejs)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — The Event Loop](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick)** — Fase event loop dan penjadwalan callback.
+- **Referensi dari [Node.js — Worker Threads](https://nodejs.org/api/worker_threads.html)** — Pemisahan komputasi CPU dari thread utama.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

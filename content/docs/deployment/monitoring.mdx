@@ -1,0 +1,105 @@
+---
+title: "Monitoring"
+description: "Monitoring menghubungkan metrik, log, dan trace dengan dampak pengguna."
+---
+
+## Overview
+
+Monitoring menghubungkan metrik, log, dan trace dengan dampak pengguna. Mulai dari traffic, error rate, latency, dan saturation sebelum menambah banyak dashboard.
+
+## Concept
+
+Fokus penerapan **Monitoring** adalah tentukan SLO. Pantau p95 latency. Gunakan alert yang dapat ditindaklanjuti. Contoh berikut memperlihatkan konteks kategori Deployment; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Monitoring pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tentukan SLO.
+2. Pantau p95 latency.
+3. Gunakan alert yang dapat ditindaklanjuti.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="monitoring.mjs"
+export function durationMetric(start, status) {
+  return { durationMs: performance.now() - start, status };
+}
+// Kirim metric ke backend observability; hindari label ber-cardinality tinggi.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run build
+# Atur environment platform, lalu jalankan smoke test setelah deploy.
+```
+
+## Code Explanation
+
+Monitoring menghubungkan metrik, log, dan trace dengan dampak pengguna. Mulai dari traffic, error rate, latency, dan saturation sebelum menambah banyak dashboard. Dalam implementasi nyata, pantau p95 latency dan gunakan alert yang dapat ditindaklanjuti sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Monitoring, verifikasi langkah “Tentukan SLO” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Pantau p95 latency.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan alert yang dapat ditindaklanjuti.
+
+## Testing
+
+Uji Monitoring dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tentukan slo” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Deployment Checklist](/docs/deployment/deployment-checklist)
+- [Deployment overview](/docs/deployment)
+- [Docker Node.js Guide](https://docs.docker.com/guides/nodejs/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OpenTelemetry — Observability Primer](https://opentelemetry.io/docs/concepts/observability-primer/)** — Hubungan metrik, log, trace, dan observability.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

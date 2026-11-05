@@ -1,0 +1,74 @@
+---
+title: "Backend Roadmap"
+description: "Jalur belajar terarah dari JavaScript fundamentals hingga aplikasi backend siap dioperasikan."
+---
+
+## Overview
+
+Gunakan roadmap ini sebagai urutan belajar, bukan daftar teknologi yang harus dihafal. Hasil akhirnya adalah satu API notes yang memiliki identitas pengguna, isolasi data, test, dan prosedur rilis.
+
+## Concept
+
+Pelajari alat saat dibutuhkan oleh masalah. Kamu tidak memerlukan Redis untuk endpoint pertama, tetapi harus memahami validasi dan ownership sebelum menyimpan data pengguna.
+
+## Prerequisites
+
+Dasar pemrograman dan akses ke terminal. Jika belum pernah memakai Node.js, mulai dari [Node.js Installation](/docs/getting-started/node-js-installation).
+
+## Installation
+
+Pasang Node.js LTS dan editor. Setelah membuka repository, gunakan npm ci untuk instalasi deterministik.
+
+## Project Structure
+
+Materi dikelompokkan menjadi fondasi, implementasi, dan operasi production. Setiap bagian memiliki target yang bisa diverifikasi.
+
+## Implementation
+
+<Steps>
+<Step><h3>01 — Bangun fondasi bahasa</h3><p>Pelajari functions, objects, modules, Promise, dan async/await. Lanjutkan ke TypeScript strict dan validasi runtime.</p><p>Target: fungsi transformasi data yang dapat diuji tanpa server.</p><a href="/docs/javascript">Buka JavaScript & TypeScript →</a></Step>
+<Step><h3>02 — Pahami runtime dan HTTP</h3><p>Pelajari event loop, environment variables, routing, middleware, dan status HTTP.</p><p>Target: GET /health dan GET /api/notes yang mengembalikan JSON konsisten.</p><a href="/docs/getting-started/first-backend-application">Bangun API pertama →</a></Step>
+<Step><h3>03 — Kelola data</h3><p>Rancang tabel, relasi, constraint, migration, dan transaksi. Tambahkan validasi CRUD serta pagination.</p><p>Target: create, list, update, dan delete dengan error yang jelas.</p><a href="/docs/database">Pelajari Database →</a></Step>
+<Step><h3>04 — Tambahkan identitas dan akses</h3><p>Implementasikan hashing password, login, JWT, refresh rotation, serta ownership. Uji akses lintas user.</p><p>Target: user A tidak dapat membaca atau mengubah note user B.</p><a href="/docs/authentication/jwt-authentication">Implementasikan authentication →</a></Step>
+<Step><h3>05 — Uji dan operasikan</h3><p>Jalankan integration test, dependency audit, health checks, dan deployment dengan environment yang terpisah.</p><p>Target: rilis dapat ditelusuri dan dikembalikan ke versi sebelumnya.</p><a href="/docs/deployment/deployment-checklist">Buka checklist deployment →</a></Step>
+</Steps>
+
+## Code Explanation
+
+Controller mengatur HTTP, service memegang aturan bisnis, dan repository mengelola persistence. Tambahkan lapisan ketika tanggung jawabnya mulai berbeda, bukan untuk memenuhi jumlah folder.
+
+## API Examples
+
+Kontrak yang dituju: POST /api/auth/register → POST /api/auth/login → POST /api/notes dengan bearer token → GET /api/notes. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk request dan response.
+
+## Error Handling
+
+Jika satu materi terasa terlalu besar, kembali ke prasyaratnya. Kegagalan test adalah petunjuk perilaku yang belum sesuai kontrak; baca status, body, dan input pemicunya.
+
+## Security & Best Practices
+
+Gunakan data sintetis selama belajar. Jangan memasukkan secret ke Git, menonaktifkan validasi untuk memperbaiki test, atau menggunakan in-memory adapter sebagai database production.
+
+## Testing
+
+```bash title="terminal"
+npm run test:examples
+npm run test:content
+npm run build
+```
+
+
+## Related Topics
+
+- [Testing Fundamentals](/docs/testing/testing-fundamentals)
+- [Layered Architecture](/docs/architecture/layered-architecture)
+- [Deployment Checklist](/docs/deployment/deployment-checklist)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Introduction to Node.js](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)** — Model runtime dan dasar penggunaan Node.js.
+- **Referensi dari [MDN Web Docs — JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)** — Sintaks, tipe data, fungsi, object, modules, dan asynchronous programming.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

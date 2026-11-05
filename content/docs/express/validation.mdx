@@ -1,0 +1,130 @@
+---
+title: "Validation"
+description: "Validasi harus dilakukan sebelum service memproses input."
+---
+
+## Overview
+
+Validasi harus dilakukan sebelum service memproses input. Schema runtime seperti Zod menjaga tipe hasil parse dan memberi pesan error yang dapat dipetakan ke field.
+
+## Concept
+
+Fokus penerapan **Validation** adalah batasi panjang string. Tolak field yang tidak diizinkan. Return 422 untuk pelanggaran schema. Contoh berikut memperlihatkan konteks kategori Express.js; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Validation pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Batasi panjang string.
+2. Tolak field yang tidak diizinkan.
+3. Return 422 untuk pelanggaran schema.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="validation.mjs"
+import { z } from "zod";
+const schema = z.strictObject({ title: z.string().trim().min(1).max(200) });
+const result = schema.safeParse({ title: "  Backend  " });
+if (result.success) console.log(result.data.title); // Backend
+```
+
+### Konteks kategori
+
+```js title="app.mjs"
+import express from "express";
+const app = express();
+app.use(express.json({ limit: "16kb" }));
+app.get("/health", (_req, res) => res.json({ data: { status: "ok" } }));
+app.use((_req, res) => res.status(404).json({ error: { code: "NOT_FOUND" } }));
+app.listen(4000, "127.0.0.1");
+```
+
+## Code Explanation
+
+Validasi harus dilakukan sebelum service memproses input. Schema runtime seperti Zod menjaga tipe hasil parse dan memberi pesan error yang dapat dipetakan ke field. Dalam implementasi nyata, tolak field yang tidak diizinkan dan return 422 untuk pelanggaran schema sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Validation, verifikasi langkah “Batasi panjang string” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tolak field yang tidak diizinkan.
+- Batasi hak akses dan data yang dikirim ke client.
+- Return 422 untuk pelanggaran schema.
+
+## Testing
+
+Uji Validation dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “batasi panjang string” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Logging](/docs/express/logging)
+- [Express.js overview](/docs/express)
+- [Express Guide](https://expressjs.com/en/guide/routing.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Zod — Defining Schemas](https://zod.dev/api)** — Schema runtime, parsing, dan pembatasan field.
+- **Referensi dari [OWASP — Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)** — Allowlist, validasi bentuk, dan makna input.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

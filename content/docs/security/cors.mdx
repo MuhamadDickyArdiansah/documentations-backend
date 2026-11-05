@@ -1,0 +1,110 @@
+---
+title: "CORS"
+description: "CORS adalah kebijakan browser untuk membaca response lintas origin."
+---
+
+## Overview
+
+CORS adalah kebijakan browser untuk membaca response lintas origin. CORS tidak mencegah server lain mengirim request dan bukan pengganti authentication atau CSRF protection.
+
+## Concept
+
+Fokus penerapan **CORS** adalah allowlist origin. Hindari wildcard dengan credentials. Batasi method dan header. Contoh berikut memperlihatkan konteks kategori Security; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan CORS pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Allowlist origin.
+2. Hindari wildcard dengan credentials.
+3. Batasi method dan header.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="cors.mjs"
+// Middleware allowlist minimal. Untuk konfigurasi lengkap gunakan paket cors.
+export function allowedOrigin(req, res, next) {
+  const origin = req.headers.origin;
+  if (origin && origin !== "https://app.example.com") return res.status(403).end();
+  if (origin) { res.setHeader("Access-Control-Allow-Origin", origin); res.vary("Origin"); }
+  next();
+}
+// Ini bukan authentication dan tidak menangani seluruh preflight.
+```
+
+### Konteks kategori
+
+```js title="safe-compare.mjs"
+import { timingSafeEqual } from "node:crypto";
+export function equalDigest(a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false;
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+## Code Explanation
+
+CORS adalah kebijakan browser untuk membaca response lintas origin. CORS tidak mencegah server lain mengirim request dan bukan pengganti authentication atau CSRF protection. Dalam implementasi nyata, hindari wildcard dengan credentials dan batasi method dan header sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk CORS, verifikasi langkah “Allowlist origin” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Hindari wildcard dengan credentials.
+- Batasi hak akses dan data yang dikirim ke client.
+- Batasi method dan header.
+
+## Testing
+
+Uji CORS dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “allowlist origin” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Helmet & Security Headers](/docs/security/helmet-and-security-headers)
+- [Security overview](/docs/security)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [MDN Web Docs — CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS)** — Kebijakan browser terhadap akses lintas origin.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

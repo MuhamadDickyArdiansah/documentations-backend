@@ -1,0 +1,106 @@
+---
+title: "Introduction"
+description: "Satu handbook untuk memahami, membangun, dan merawat backend JavaScript & TypeScript."
+---
+
+## Selamat datang
+
+Backend adalah bagian aplikasi yang menerima request, menjalankan aturan bisnis, dan mengelola data. Di balik tombol “Simpan”, ada validasi, keputusan hak akses, operasi database, serta response yang perlu dirancang dengan jelas.
+
+Handbook ini membantu kamu memahami alasan di balik implementasi. Kamu akan mulai dengan HTTP dan Node.js, membangun API Express, menambahkan database dan identitas, kemudian menguji serta merilisnya.
+
+<Callout type="info" title="Untuk siapa handbook ini?">Developer yang baru mulai belajar backend, frontend engineer yang ingin menjadi fullstack, dan backend engineer yang membutuhkan referensi implementasi.</Callout>
+
+## Concept
+
+Alur dasar backend dapat dibaca sebagai empat tahap:
+
+| Tahap | Tanggung jawab | Contoh |
+| --- | --- | --- |
+| Transport | Menerima dan mengurai request | POST /api/notes |
+| Validation & policy | Memeriksa input dan hak akses | Title tidak kosong, user terautentikasi |
+| Business & data | Menjalankan aturan dan menyimpan hasil | Membuat note milik actor |
+| Response | Mengembalikan hasil yang konsisten | HTTP 201 dan object data |
+
+Jangan mengandalkan validasi frontend. Request dapat dibuat langsung melalui curl, script, atau client lain.
+
+## Prerequisites
+
+- Dasar JavaScript: fungsi, object, array, dan Promise.
+- Terminal dan Git.
+- Node.js LTS yang masih didukung. Periksa [rilis resmi](https://nodejs.org/en/about/previous-releases).
+
+## Installation
+
+Clone repository handbook, lalu dari root jalankan:
+
+```bash title="terminal"
+npm ci
+npm run dev
+```
+
+
+## Project Structure
+
+Artikel disimpan sebagai MDX pada content/docs. Contoh backend terpisah pada examples dan tidak dipakai sebagai server untuk website dokumentasi.
+
+```text title="repository"
+content/docs/     # Artikel MDX dan navigasi
+src/app/          # Website Next.js
+src/components/   # Komponen UI
+examples/         # API pembelajaran yang dapat dijalankan
+```
+
+
+## Implementation
+
+<Cards>
+<Card title="Ikuti roadmap" href="/docs/getting-started/backend-roadmap">Bangun fondasi dan pilih urutan belajar.</Card>
+<Card title="Langsung praktik" href="/docs/getting-started/first-backend-application">Buat endpoint pertama menggunakan Express.</Card>
+<Card title="Cari implementasi" href="/docs/projects/complete-backend-starter">Pelajari contoh auth, authorization, dan CRUD.</Card>
+</Cards>
+
+## Code Explanation
+
+Setiap artikel memperkenalkan konsep sebelum kode. Label filename menunjukkan lokasi berkas, sementara tab memisahkan JavaScript dan TypeScript jika implementasi berbeda. Gunakan tombol salin untuk mengambil kode tanpa label baris.
+
+## API Examples
+
+Response sukses pada contoh menggunakan field data. Kegagalan menggunakan error.code yang stabil dan error.message yang dapat dibaca. Header, status code, dan body merupakan bagian kontrak yang sama.
+
+```json title="200 — GET /health"
+{"data":{"status":"ok"}}
+```
+
+
+## Error Handling
+
+Periksa versi Node dan hasil npm ci jika contoh gagal dijalankan. Status 401 berarti credential belum valid; 404 juga digunakan untuk resource yang tidak tersedia dalam scope pengguna.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas contoh pembelajaran">API lokal memakai penyimpanan in-memory dan diikat ke loopback. Data hilang saat restart. Untuk production, ganti dengan persistence yang mendukung transaksi, gunakan TLS, dan kelola secret melalui platform deployment.</Callout>
+
+## Testing
+
+```bash title="terminal"
+npm run test:examples
+npm run test:content
+npm run build
+```
+
+
+## Related Topics
+
+- [Development Environment](/docs/getting-started/development-environment)
+- [Backend Roadmap](/docs/getting-started/backend-roadmap)
+- [First Backend Application](/docs/getting-started/first-backend-application)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Introduction to Node.js](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)** — Model runtime dan dasar penggunaan Node.js.
+- **Referensi dari [MDN Web Docs — JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)** — Sintaks, tipe data, fungsi, object, modules, dan asynchronous programming.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,25 @@
+{
+  "title": "Authentication",
+  "icon": "Fingerprint",
+  "pages": [
+    "index",
+    "authentication-fundamentals",
+    "password-hashing",
+    "user-registration",
+    "user-login",
+    "jwt-authentication",
+    "access-token",
+    "refresh-token",
+    "token-verification",
+    "token-revocation",
+    "logout",
+    "cookie-based-authentication",
+    "session-based-authentication",
+    "forgot-password",
+    "reset-password",
+    "email-verification",
+    "oauth-google-login",
+    "multi-factor-authentication"
+  ],
+  "defaultOpen": false
+}

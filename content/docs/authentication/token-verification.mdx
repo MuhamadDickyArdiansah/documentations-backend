@@ -1,0 +1,128 @@
+---
+title: "Token Verification"
+description: "Membaca payload dengan decode tidak memverifikasi signature."
+---
+
+## Overview
+
+Membaca payload dengan decode tidak memverifikasi signature. Terapkan allowlist algorithm dan tolak klaim wajib yang hilang sebelum protected handler berjalan.
+
+## Concept
+
+Fokus penerapan **Token Verification** adalah gunakan jwtVerify. Validasi issuer dan audience. Tolak token kedaluwarsa. Contoh berikut memperlihatkan konteks kategori Authentication; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Token Verification pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan jwtVerify.
+2. Validasi issuer dan audience.
+3. Tolak token kedaluwarsa.
+
+### Contoh terfokus
+
+Cuplikan route memakai helper dan state dari examples/complete-backend/app.mjs. Implementasi lengkap yang dapat dijalankan ada pada [JWT Authentication](/docs/authentication/jwt-authentication). Cuplikan modul mandiri dapat disimpan sebagai .mjs; import examples menggunakan path relatif dari root repository.
+
+```js title="token-verification.mjs"
+import { createTokens } from "./examples/authentication/tokens.mjs";
+const tokens = createTokens(process.env.JWT_SECRET);
+// Gunakan token yang diperoleh dari login:
+// const claims = await tokens.verify(accessToken);
+// console.log(claims.sub, claims.sid);
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"reader@example.com","password":"a-long-example-password"}'
+```
+
+## Code Explanation
+
+Membaca payload dengan decode tidak memverifikasi signature. Terapkan allowlist algorithm dan tolak klaim wajib yang hilang sebelum protected handler berjalan. Dalam implementasi nyata, validasi issuer dan audience dan tolak token kedaluwarsa sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Token Verification, verifikasi langkah “Gunakan jwtVerify” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Validasi issuer dan audience.
+- Batasi hak akses dan data yang dikirim ke client.
+- Tolak token kedaluwarsa.
+
+## Testing
+
+Uji Token Verification dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan jwtverify” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Token Revocation](/docs/authentication/token-revocation)
+- [Authentication overview](/docs/authentication)
+- [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [panva/jose — Dokumentasi resmi library](https://github.com/panva/jose)** — Implementasi signing dan verification dengan JOSE.
+- **Referensi dari [IETF — RFC 7519: JSON Web Token](https://www.rfc-editor.org/rfc/rfc7519)** — Format token dan makna klaim JWT.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

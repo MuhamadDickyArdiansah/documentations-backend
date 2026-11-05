@@ -1,0 +1,134 @@
+---
+title: "CRUD with Prisma"
+description: "Prisma membantu operasi bertipe tetapi query tetap perlu scope actor."
+---
+
+## Overview
+
+Prisma membantu operasi bertipe tetapi query tetap perlu scope actor. Gabungkan ID dan ownerId dalam operasi tulis agar pemeriksaan dan perubahan tidak terpisah.
+
+## Concept
+
+Fokus penerapan **CRUD with Prisma** adalah generate Prisma client. Pilih field response. Tangani unique conflict dan record not found. Contoh berikut memperlihatkan konteks kategori CRUD Operations; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan CRUD with Prisma pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Generate Prisma client.
+2. Pilih field response.
+3. Tangani unique conflict dan record not found.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="crud-with-prisma.mjs"
+// Prisma 6.19; client, schema Note, DATABASE_URL, dan actor wajib tersedia.
+export function createNoteRepository(prisma) {
+  return {
+    create: (actor, title) => prisma.note.create({ data: { ownerId: actor.id, title }, select: { id: true, title: true } }),
+    list: actor => prisma.note.findMany({ where: { ownerId: actor.id }, take: 20, orderBy: [{ createdAt: "desc" }, { id: "desc" }] }),
+    update: (actor, id, title) => prisma.note.updateMany({ where: { id, ownerId: actor.id }, data: { title } }),
+    delete: (actor, id) => prisma.note.deleteMany({ where: { id, ownerId: actor.id } }),
+  };
+}
+// count=0 pada update/delete berarti resource tidak tersedia dalam scope actor.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/notes \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Belajar backend"}'
+```
+
+## Code Explanation
+
+Prisma membantu operasi bertipe tetapi query tetap perlu scope actor. Gabungkan ID dan ownerId dalam operasi tulis agar pemeriksaan dan perubahan tidak terpisah. Dalam implementasi nyata, pilih field response dan tangani unique conflict dan record not found sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk CRUD with Prisma, verifikasi langkah “Generate Prisma client” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Pilih field response.
+- Batasi hak akses dan data yang dikirim ke client.
+- Tangani unique conflict dan record not found.
+
+## Testing
+
+Uji CRUD with Prisma dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “generate prisma client” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [CRUD Validation](/docs/crud/crud-validation)
+- [CRUD Operations overview](/docs/crud)
+- [Prisma CRUD](https://www.prisma.io/docs/orm/prisma-client/queries/crud)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Prisma — Panduan Prisma ORM v6](https://www.prisma.io/docs/guides/upgrade-prisma-orm/v6)** — Konteks versi Prisma 6 yang digunakan pada cuplikan; API versi terbaru dapat berbeda.
+- **Referensi dari [OWASP — Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)** — Least privilege, default deny, dan pemeriksaan akses resource.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

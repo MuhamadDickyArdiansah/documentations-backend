@@ -1,0 +1,39 @@
+---
+title: "Deployment"
+description: "Pelajari Deployment melalui 10 topik yang terstruktur, dari konsep hingga praktik."
+icon: CloudUpload
+---
+
+## Tentang kategori ini
+
+Environment production harus divalidasi sebelum menerima traffic. Pisahkan build-time public configuration dari runtime secret dan hindari fallback credential pada production.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="Environment Configuration" href="/docs/deployment/environment-configuration">Environment production harus divalidasi sebelum menerima traffic.</Card>
+<Card title="Docker" href="/docs/deployment/docker">Image yang baik reproducible, kecil, dan berjalan sebagai user non-root.</Card>
+<Card title="Docker Compose" href="/docs/deployment/docker-compose">Compose mendeskripsikan layanan lokal seperti API dan PostgreSQL.</Card>
+<Card title="CI/CD" href="/docs/deployment/ci-cd">Pipeline memverifikasi perubahan sebelum rilis dan mengotomatisasi deployment yang dapat dilacak.</Card>
+<Card title="GitHub Actions" href="/docs/deployment/github-actions">Workflow menjalankan job pada event repository.</Card>
+<Card title="Database Migration" href="/docs/deployment/database-migration">Migration production harus kompatibel dengan versi aplikasi yang sedang berjalan.</Card>
+<Card title="Production Configuration" href="/docs/deployment/production-configuration">Production memerlukan TLS, batas resource, observability, dan strategi restart.</Card>
+<Card title="Health Checks" href="/docs/deployment/health-checks">Liveness menunjukkan proses masih hidup; readiness menunjukkan proses siap melayani request.</Card>
+<Card title="Monitoring" href="/docs/deployment/monitoring">Monitoring menghubungkan metrik, log, dan trace dengan dampak pengguna.</Card>
+<Card title="Deployment Checklist" href="/docs/deployment/deployment-checklist">Checklist merangkum kondisi yang harus dipenuhi sebelum rilis.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Docker — Node.js Guide](https://docs.docker.com/guides/nodejs/)** — Container image, development workflow, dan deployment aplikasi Node.
+- **Referensi dari [Express — Production Performance and Reliability](https://expressjs.com/en/advanced/best-practice-performance/)** — Operasi server, reliability, dan konfigurasi production.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

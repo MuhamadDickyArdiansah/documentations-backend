@@ -1,0 +1,108 @@
+---
+title: "Error Handling"
+description: "Error adalah nilai yang harus diterjemahkan sesuai lapisannya."
+---
+
+## Overview
+
+Error adalah nilai yang harus diterjemahkan sesuai lapisannya. Error validasi berbeda dari kegagalan database; jangan mengirim stack trace atau detail infrastruktur kepada client.
+
+## Concept
+
+Fokus penerapan **Error Handling** adalah gunakan class Error. Pertahankan cause untuk debugging. Log detail internal dengan request ID. Contoh berikut memperlihatkan konteks kategori JavaScript & TypeScript; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Error Handling pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan class Error.
+2. Pertahankan cause untuk debugging.
+3. Log detail internal dengan request ID.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="error-handling.mjs"
+export class ValidationError extends Error {
+  constructor(message) { super(message); this.name = "ValidationError"; }
+}
+export function title(value) {
+  if (typeof value !== "string" || !value.trim()) throw new ValidationError("Title wajib diisi");
+  return value.trim();
+}
+```
+
+### Konteks kategori
+
+```js title="example.mjs"
+const notes = [{ id: 1, title: "Belajar backend", done: false }];
+const titles = notes.filter(note => !note.done).map(note => note.title);
+console.log(titles);
+```
+
+## Code Explanation
+
+Error adalah nilai yang harus diterjemahkan sesuai lapisannya. Error validasi berbeda dari kegagalan database; jangan mengirim stack trace atau detail infrastruktur kepada client. Dalam implementasi nyata, pertahankan cause untuk debugging dan log detail internal dengan request id sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Error Handling, verifikasi langkah “Gunakan class Error” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Pertahankan cause untuk debugging.
+- Batasi hak akses dan data yang dikirim ke client.
+- Log detail internal dengan request ID.
+
+## Testing
+
+Uji Error Handling dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan class error” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [TypeScript Fundamentals](/docs/javascript/typescript-fundamentals)
+- [JavaScript & TypeScript overview](/docs/javascript)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [MDN Web Docs — JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)** — Sintaks, tipe data, fungsi, object, modules, dan asynchronous programming.
+- **Referensi dari [Express — Error Handling](https://expressjs.com/en/guide/error-handling/)** — Async error dan middleware penanganan kegagalan.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,1063 @@
+{
+  "sources": {
+    "js": {
+      "name": "MDN Web Docs — JavaScript Guide",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide",
+      "description": "Sintaks, tipe data, fungsi, object, modules, dan asynchronous programming."
+    },
+    "ts": {
+      "name": "Microsoft TypeScript — Handbook",
+      "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+      "description": "Sistem tipe, narrowing, interface, dan generic."
+    },
+    "tsconfig": {
+      "name": "Microsoft TypeScript — TSConfig Reference",
+      "url": "https://www.typescriptlang.org/tsconfig/",
+      "description": "Opsi compiler dan konfigurasi pemeriksaan tipe."
+    },
+    "node": {
+      "name": "Node.js — API Documentation",
+      "url": "https://nodejs.org/api/",
+      "description": "API runtime dan perilaku module bawaan Node.js."
+    },
+    "nodeIntro": {
+      "name": "Node.js — Introduction to Node.js",
+      "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs",
+      "description": "Model runtime dan dasar penggunaan Node.js."
+    },
+    "nodeInstall": {
+      "name": "Node.js — Download dan Installation",
+      "url": "https://nodejs.org/en/download",
+      "description": "Instalasi runtime dari distribusi resmi."
+    },
+    "npm": {
+      "name": "npm — npm ci",
+      "url": "https://docs.npmjs.com/cli/v11/commands/npm-ci/",
+      "description": "Instalasi deterministik dari lockfile."
+    },
+    "fs": {
+      "name": "Node.js — File System API",
+      "url": "https://nodejs.org/api/fs.html",
+      "description": "Operasi file, promises, dan penanganan error I/O."
+    },
+    "http": {
+      "name": "Node.js — HTTP API",
+      "url": "https://nodejs.org/api/http.html",
+      "description": "Request, response, server, dan batas koneksi."
+    },
+    "process": {
+      "name": "Node.js — Process API",
+      "url": "https://nodejs.org/api/process.html",
+      "description": "Environment variables, lifecycle, dan signal proses."
+    },
+    "esm": {
+      "name": "Node.js — ECMAScript Modules",
+      "url": "https://nodejs.org/api/esm.html",
+      "description": "Import, export, resolusi file, dan perilaku ESM."
+    },
+    "worker": {
+      "name": "Node.js — Worker Threads",
+      "url": "https://nodejs.org/api/worker_threads.html",
+      "description": "Pemisahan komputasi CPU dari thread utama."
+    },
+    "loop": {
+      "name": "Node.js — The Event Loop",
+      "url": "https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick",
+      "description": "Fase event loop dan penjadwalan callback."
+    },
+    "crypto": {
+      "name": "Node.js — Crypto API",
+      "url": "https://nodejs.org/api/crypto.html",
+      "description": "Random bytes, scrypt, HMAC, dan perbandingan digest."
+    },
+    "timers": {
+      "name": "Node.js — Timers API",
+      "url": "https://nodejs.org/api/timers.html",
+      "description": "Timer dan interval lokal; bukan scheduler persisten."
+    },
+    "globals": {
+      "name": "Node.js — Global Objects",
+      "url": "https://nodejs.org/api/globals.html",
+      "description": "Fetch, AbortSignal, dan primitive runtime."
+    },
+    "test": {
+      "name": "Node.js — Test Runner",
+      "url": "https://nodejs.org/api/test.html",
+      "description": "Unit test, subtest, mocking, dan coverage."
+    },
+    "express": {
+      "name": "Express — Routing Guide",
+      "url": "https://expressjs.com/en/guide/routing/",
+      "description": "Route, router, dan pemetaan endpoint HTTP."
+    },
+    "middleware": {
+      "name": "Express — Using Middleware",
+      "url": "https://expressjs.com/en/guide/using-middleware/",
+      "description": "Urutan middleware dan penerusan request."
+    },
+    "expressAPI": {
+      "name": "Express — API Reference",
+      "url": "https://expressjs.com/en/api/",
+      "description": "Kontrak API aplikasi, request, response, dan router."
+    },
+    "expressError": {
+      "name": "Express — Error Handling",
+      "url": "https://expressjs.com/en/guide/error-handling/",
+      "description": "Async error dan middleware penanganan kegagalan."
+    },
+    "expressProd": {
+      "name": "Express — Production Performance and Reliability",
+      "url": "https://expressjs.com/en/advanced/best-practice-performance/",
+      "description": "Operasi server, reliability, dan konfigurasi production."
+    },
+    "health": {
+      "name": "Express — Health Checks and Graceful Shutdown",
+      "url": "https://expressjs.com/en/advanced/healthcheck-graceful-shutdown/",
+      "description": "Readiness, liveness, serta penghentian proses."
+    },
+    "httpSpec": {
+      "name": "IETF — RFC 9110: HTTP Semantics",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110",
+      "description": "Semantik method, status code, header, dan representasi."
+    },
+    "apiGuidelines": {
+      "name": "Microsoft — REST API Guidelines",
+      "url": "https://github.com/microsoft/api-guidelines",
+      "description": "Desain resource, daftar hasil, filtering, dan kontrak API."
+    },
+    "openapi": {
+      "name": "OpenAPI Initiative — OpenAPI Specification",
+      "url": "https://spec.openapis.org/oas/latest.html",
+      "description": "Struktur spesifikasi endpoint, schema, dan security scheme."
+    },
+    "jwt": {
+      "name": "IETF — RFC 7519: JSON Web Token",
+      "url": "https://www.rfc-editor.org/rfc/rfc7519",
+      "description": "Format token dan makna klaim JWT."
+    },
+    "jose": {
+      "name": "panva/jose — Dokumentasi resmi library",
+      "url": "https://github.com/panva/jose",
+      "description": "Implementasi signing dan verification dengan JOSE."
+    },
+    "problem": {
+      "name": "IETF — RFC 9457: Problem Details for HTTP APIs",
+      "url": "https://www.rfc-editor.org/rfc/rfc9457",
+      "description": "Standar alternatif representasi error; envelope contoh handbook merupakan format sendiri."
+    },
+    "pg": {
+      "name": "PostgreSQL — Official Documentation",
+      "url": "https://www.postgresql.org/docs/current/",
+      "description": "Model relasional, SQL, dan operasi database."
+    },
+    "constraints": {
+      "name": "PostgreSQL — Constraints",
+      "url": "https://www.postgresql.org/docs/current/ddl-constraints.html",
+      "description": "Primary key, unique constraint, foreign key, dan integritas data."
+    },
+    "transaction": {
+      "name": "PostgreSQL — Transactions",
+      "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+      "description": "Atomic commit dan rollback pada operasi terkait."
+    },
+    "indexes": {
+      "name": "PostgreSQL — Indexes",
+      "url": "https://www.postgresql.org/docs/current/indexes.html",
+      "description": "Jenis index, manfaat pembacaan, dan biaya write."
+    },
+    "explain": {
+      "name": "PostgreSQL — Using EXPLAIN",
+      "url": "https://www.postgresql.org/docs/current/using-explain.html",
+      "description": "Membaca query plan dan mengukur eksekusi query."
+    },
+    "prisma": {
+      "name": "Prisma — Panduan Prisma ORM v6",
+      "url": "https://www.prisma.io/docs/guides/upgrade-prisma-orm/v6",
+      "description": "Konteks versi Prisma 6 yang digunakan pada cuplikan; API versi terbaru dapat berbeda."
+    },
+    "auth": {
+      "name": "OWASP — Authentication Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+      "description": "Pengamanan login, credential, dan siklus identitas."
+    },
+    "authz": {
+      "name": "OWASP — Authorization Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+      "description": "Least privilege, default deny, dan pemeriksaan akses resource."
+    },
+    "password": {
+      "name": "OWASP — Password Storage Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+      "description": "Hash adaptif, salt, dan pemilihan work factor."
+    },
+    "session": {
+      "name": "OWASP — Session Management Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+      "description": "Penyimpanan sesi, expiry, cookie, serta pencabutan sesi."
+    },
+    "forgot": {
+      "name": "OWASP — Forgot Password Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html",
+      "description": "Recovery, token sekali pakai, dan pencegahan enumerasi akun."
+    },
+    "mfa": {
+      "name": "OWASP — Multifactor Authentication Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html",
+      "description": "Enrollment faktor tambahan dan recovery code."
+    },
+    "oauth": {
+      "name": "OWASP — OAuth2 Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Cheat_Sheet.html",
+      "description": "PKCE, state, redirect URI, dan ancaman OAuth."
+    },
+    "google": {
+      "name": "Google Identity — OpenID Connect",
+      "url": "https://developers.google.com/identity/openid-connect/openid-connect",
+      "description": "Authorization flow dan validasi identitas Google."
+    },
+    "restSecurity": {
+      "name": "OWASP — REST Security Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html",
+      "description": "Kontrol keamanan pada endpoint dan data API."
+    },
+    "sqlInjection": {
+      "name": "OWASP — SQL Injection Prevention",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+      "description": "Parameterized queries dan pemisahan query dari input."
+    },
+    "xss": {
+      "name": "OWASP — Cross Site Scripting Prevention",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html",
+      "description": "Output encoding dan perlindungan data yang dirender browser."
+    },
+    "csrf": {
+      "name": "OWASP — CSRF Prevention",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html",
+      "description": "Perlindungan request dengan credential otomatis browser."
+    },
+    "upload": {
+      "name": "OWASP — File Upload Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html",
+      "description": "Validasi file, pembatasan ukuran, dan storage aman."
+    },
+    "logging": {
+      "name": "OWASP — Logging Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
+      "description": "Audit event, redaction, dan perlindungan log."
+    },
+    "input": {
+      "name": "OWASP — Input Validation Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
+      "description": "Allowlist, validasi bentuk, dan makna input."
+    },
+    "secrets": {
+      "name": "OWASP — Secrets Management Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+      "description": "Penyimpanan, akses, rotasi, dan lifecycle secret."
+    },
+    "cors": {
+      "name": "MDN Web Docs — CORS",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS",
+      "description": "Kebijakan browser terhadap akses lintas origin."
+    },
+    "zod": {
+      "name": "Zod — Defining Schemas",
+      "url": "https://zod.dev/api",
+      "description": "Schema runtime, parsing, dan pembatasan field."
+    },
+    "helmet": {
+      "name": "Helmet — Dokumentasi resmi",
+      "url": "https://helmet.js.org/",
+      "description": "Middleware security headers dan konfigurasi CSP."
+    },
+    "rateLimit": {
+      "name": "express-rate-limit — Overview",
+      "url": "https://express-rate-limit.mintlify.app/overview",
+      "description": "Konfigurasi limiter dan dukungan penyimpanan counter."
+    },
+    "redis": {
+      "name": "Redis — Develop with Redis",
+      "url": "https://redis.io/docs/latest/develop/",
+      "description": "Cache, TTL, data structures, dan client."
+    },
+    "queue": {
+      "name": "BullMQ — Official Documentation",
+      "url": "https://docs.bullmq.io/",
+      "description": "Queue, retry, jobs, dan pola background processing."
+    },
+    "webhooks": {
+      "name": "Stripe — Receive Webhook Events",
+      "url": "https://docs.stripe.com/webhooks",
+      "description": "Verifikasi signature, pemrosesan event, dan retry delivery."
+    },
+    "idempotency": {
+      "name": "Stripe — Idempotent Requests",
+      "url": "https://docs.stripe.com/api/idempotent_requests",
+      "description": "Key idempotency dan perilaku retry pada API."
+    },
+    "websocket": {
+      "name": "MDN Web Docs — WebSocket API",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API",
+      "description": "Koneksi dua arah dan lifecycle komunikasi realtime."
+    },
+    "smtp": {
+      "name": "IETF — RFC 5321: Simple Mail Transfer Protocol",
+      "url": "https://www.rfc-editor.org/rfc/rfc5321",
+      "description": "Protokol pengiriman email; adapter provider pada contoh merupakan abstraksi sendiri."
+    },
+    "push": {
+      "name": "IETF — RFC 8030: Generic Event Delivery Using HTTP Push",
+      "url": "https://www.rfc-editor.org/rfc/rfc8030",
+      "description": "Dasar protokol pengiriman push notification."
+    },
+    "service": {
+      "name": "Martin Fowler — Service Layer",
+      "url": "https://martinfowler.com/eaaCatalog/serviceLayer.html",
+      "description": "Boundary service dan orkestrasi operasi bisnis."
+    },
+    "repository": {
+      "name": "Martin Fowler — Repository",
+      "url": "https://martinfowler.com/eaaCatalog/repository.html",
+      "description": "Abstraksi akses persistence dalam bahasa domain."
+    },
+    "di": {
+      "name": "Martin Fowler — Dependency Injection",
+      "url": "https://martinfowler.com/articles/injection.html",
+      "description": "Pemisahan konfigurasi dependensi dari penggunaan."
+    },
+    "mvc": {
+      "name": "Martin Fowler — GUI Architectures",
+      "url": "https://martinfowler.com/eaaDev/uiArchs.html",
+      "description": "Asal dan variasi pola pemisahan MVC; penerapan JSON API diadaptasi dalam handbook."
+    },
+    "clean": {
+      "name": "Robert C. Martin — The Clean Architecture",
+      "url": "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html",
+      "description": "Aturan dependensi dan pemisahan domain dari infrastruktur."
+    },
+    "ocp": {
+      "name": "Robert C. Martin — The Open-Closed Principle",
+      "url": "https://blog.cleancoder.com/uncle-bob/2014/05/12/TheOpenClosedPrinciple.html",
+      "description": "Penjelasan prinsip open-closed sebagai salah satu prinsip SOLID."
+    },
+    "concerns": {
+      "name": "E. W. Dijkstra — On the Role of Scientific Thought",
+      "url": "https://www.cs.utexas.edu/~EWD/transcriptions/EWD04xx/EWD447.html",
+      "description": "Sumber awal pembahasan separation of concerns."
+    },
+    "docker": {
+      "name": "Docker — Node.js Guide",
+      "url": "https://docs.docker.com/guides/nodejs/",
+      "description": "Container image, development workflow, dan deployment aplikasi Node."
+    },
+    "compose": {
+      "name": "Docker — Compose Documentation",
+      "url": "https://docs.docker.com/compose/",
+      "description": "Konfigurasi layanan, network, dan volume."
+    },
+    "actions": {
+      "name": "GitHub — Actions Documentation",
+      "url": "https://docs.github.com/en/actions",
+      "description": "Workflow CI/CD dan pengoperasian job repository."
+    },
+    "telemetry": {
+      "name": "OpenTelemetry — Observability Primer",
+      "url": "https://opentelemetry.io/docs/concepts/observability-primer/",
+      "description": "Hubungan metrik, log, trace, dan observability."
+    }
+  },
+  "pages": {
+    "advanced/audit-logging": [
+      "logging"
+    ],
+    "advanced/background-jobs": [
+      "queue"
+    ],
+    "advanced/email-service": [
+      "smtp",
+      "queue"
+    ],
+    "advanced/external-api-integration": [
+      "globals",
+      "httpSpec"
+    ],
+    "advanced/file-upload": [
+      "upload",
+      "fs"
+    ],
+    "advanced/idempotency": [
+      "idempotency",
+      "transaction"
+    ],
+    "advanced/index": [
+      "node",
+      "restSecurity"
+    ],
+    "advanced/notifications": [
+      "push",
+      "queue"
+    ],
+    "advanced/redis-caching": [
+      "redis"
+    ],
+    "advanced/scheduled-tasks": [
+      "queue",
+      "timers"
+    ],
+    "advanced/webhooks": [
+      "webhooks",
+      "crypto"
+    ],
+    "advanced/websockets": [
+      "websocket",
+      "authz"
+    ],
+    "architecture/clean-architecture": [
+      "clean"
+    ],
+    "architecture/code-organization": [
+      "clean",
+      "repository"
+    ],
+    "architecture/dependency-injection": [
+      "di"
+    ],
+    "architecture/error-handling-standards": [
+      "problem",
+      "expressError"
+    ],
+    "architecture/index": [
+      "clean",
+      "service"
+    ],
+    "architecture/layered-architecture": [
+      "clean",
+      "service"
+    ],
+    "architecture/logging-standards": [
+      "logging",
+      "telemetry"
+    ],
+    "architecture/mvc-architecture": [
+      "mvc",
+      "service"
+    ],
+    "architecture/repository-pattern": [
+      "repository"
+    ],
+    "architecture/separation-of-concerns": [
+      "concerns",
+      "clean"
+    ],
+    "architecture/service-pattern": [
+      "service"
+    ],
+    "architecture/solid-principles": [
+      "ocp",
+      "di"
+    ],
+    "authentication/access-token": [
+      "jwt",
+      "restSecurity"
+    ],
+    "authentication/authentication-fundamentals": [
+      "auth",
+      "session"
+    ],
+    "authentication/cookie-based-authentication": [
+      "session",
+      "csrf"
+    ],
+    "authentication/email-verification": [
+      "auth",
+      "forgot"
+    ],
+    "authentication/forgot-password": [
+      "forgot"
+    ],
+    "authentication/index": [
+      "auth",
+      "session"
+    ],
+    "authentication/jwt-authentication": [
+      "jwt",
+      "jose",
+      "auth"
+    ],
+    "authentication/logout": [
+      "session"
+    ],
+    "authentication/multi-factor-authentication": [
+      "mfa",
+      "auth"
+    ],
+    "authentication/oauth-google-login": [
+      "google",
+      "oauth"
+    ],
+    "authentication/password-hashing": [
+      "password",
+      "crypto"
+    ],
+    "authentication/refresh-token": [
+      "oauth",
+      "session"
+    ],
+    "authentication/reset-password": [
+      "forgot",
+      "password"
+    ],
+    "authentication/session-based-authentication": [
+      "auth",
+      "session"
+    ],
+    "authentication/token-revocation": [
+      "session",
+      "restSecurity"
+    ],
+    "authentication/token-verification": [
+      "jose",
+      "jwt"
+    ],
+    "authentication/user-login": [
+      "auth",
+      "password"
+    ],
+    "authentication/user-registration": [
+      "auth",
+      "input"
+    ],
+    "authorization/admin-user-permissions": [
+      "authz",
+      "restSecurity"
+    ],
+    "authorization/authorization-fundamentals": [
+      "authz",
+      "restSecurity"
+    ],
+    "authorization/authorization-middleware": [
+      "authz",
+      "restSecurity"
+    ],
+    "authorization/index": [
+      "authz",
+      "restSecurity"
+    ],
+    "authorization/permission-based-access-control": [
+      "authz",
+      "restSecurity"
+    ],
+    "authorization/protected-routes": [
+      "authz",
+      "restSecurity"
+    ],
+    "authorization/resource-ownership": [
+      "authz",
+      "restSecurity"
+    ],
+    "authorization/role-and-permission-schema": [
+      "authz",
+      "restSecurity"
+    ],
+    "authorization/role-based-access-control": [
+      "authz",
+      "restSecurity"
+    ],
+    "crud/create": [
+      "express",
+      "constraints"
+    ],
+    "crud/crud-introduction": [
+      "express",
+      "constraints"
+    ],
+    "crud/crud-validation": [
+      "zod",
+      "input"
+    ],
+    "crud/crud-with-authentication": [
+      "auth",
+      "jwt"
+    ],
+    "crud/crud-with-authorization": [
+      "authz",
+      "repository"
+    ],
+    "crud/crud-with-prisma": [
+      "prisma",
+      "authz"
+    ],
+    "crud/delete": [
+      "express",
+      "constraints"
+    ],
+    "crud/index": [
+      "express",
+      "constraints"
+    ],
+    "crud/pagination-and-filtering": [
+      "apiGuidelines",
+      "authz"
+    ],
+    "crud/read": [
+      "express",
+      "constraints"
+    ],
+    "crud/relational-crud": [
+      "transaction",
+      "constraints"
+    ],
+    "crud/soft-delete": [
+      "constraints",
+      "indexes"
+    ],
+    "crud/update": [
+      "express",
+      "constraints"
+    ],
+    "database/database-design": [
+      "pg",
+      "constraints"
+    ],
+    "database/database-fundamentals": [
+      "pg",
+      "constraints"
+    ],
+    "database/database-relationships": [
+      "constraints",
+      "pg"
+    ],
+    "database/index": [
+      "pg",
+      "constraints"
+    ],
+    "database/indexing": [
+      "indexes"
+    ],
+    "database/migrations": [
+      "prisma",
+      "transaction"
+    ],
+    "database/postgresql": [
+      "pg",
+      "constraints"
+    ],
+    "database/prisma-orm": [
+      "prisma",
+      "pg"
+    ],
+    "database/prisma-schema": [
+      "prisma",
+      "constraints"
+    ],
+    "database/query-optimization": [
+      "explain",
+      "indexes"
+    ],
+    "database/seeding": [
+      "pg",
+      "constraints"
+    ],
+    "database/sql-and-nosql": [
+      "pg",
+      "constraints"
+    ],
+    "database/transactions": [
+      "transaction"
+    ],
+    "deployment/ci-cd": [
+      "actions",
+      "docker"
+    ],
+    "deployment/database-migration": [
+      "prisma",
+      "transaction"
+    ],
+    "deployment/deployment-checklist": [
+      "docker",
+      "expressProd"
+    ],
+    "deployment/docker-compose": [
+      "compose"
+    ],
+    "deployment/docker": [
+      "docker"
+    ],
+    "deployment/environment-configuration": [
+      "process",
+      "secrets"
+    ],
+    "deployment/github-actions": [
+      "actions"
+    ],
+    "deployment/health-checks": [
+      "health"
+    ],
+    "deployment/index": [
+      "docker",
+      "expressProd"
+    ],
+    "deployment/monitoring": [
+      "telemetry"
+    ],
+    "deployment/production-configuration": [
+      "docker",
+      "expressProd"
+    ],
+    "express/api-architecture": [
+      "service",
+      "apiGuidelines"
+    ],
+    "express/application-structure": [
+      "service",
+      "repository"
+    ],
+    "express/controllers": [
+      "expressAPI",
+      "service"
+    ],
+    "express/error-handling": [
+      "expressError",
+      "problem"
+    ],
+    "express/express-introduction": [
+      "express",
+      "middleware"
+    ],
+    "express/index": [
+      "express",
+      "middleware"
+    ],
+    "express/logging": [
+      "logging"
+    ],
+    "express/middleware": [
+      "middleware"
+    ],
+    "express/project-setup": [
+      "express",
+      "esm"
+    ],
+    "express/repository-pattern": [
+      "repository",
+      "di"
+    ],
+    "express/request-and-response": [
+      "expressAPI",
+      "httpSpec"
+    ],
+    "express/routing": [
+      "express"
+    ],
+    "express/services": [
+      "service",
+      "di"
+    ],
+    "express/validation": [
+      "zod",
+      "input"
+    ],
+    "getting-started/backend-roadmap": [
+      "nodeIntro",
+      "js"
+    ],
+    "getting-started/development-environment": [
+      "nodeInstall",
+      "npm"
+    ],
+    "getting-started/first-backend-application": [
+      "express",
+      "expressAPI"
+    ],
+    "getting-started/index": [
+      "nodeIntro",
+      "js"
+    ],
+    "getting-started/introduction": [
+      "nodeIntro",
+      "js"
+    ],
+    "getting-started/node-js-installation": [
+      "nodeInstall",
+      "nodeIntro"
+    ],
+    "getting-started/package-management": [
+      "npm",
+      "esm"
+    ],
+    "getting-started/prerequisites": [
+      "nodeIntro",
+      "js"
+    ],
+    "index": [
+      "nodeIntro",
+      "express",
+      "httpSpec"
+    ],
+    "javascript/async-await": [
+      "js",
+      "ts"
+    ],
+    "javascript/asynchronous-programming": [
+      "js",
+      "ts"
+    ],
+    "javascript/error-handling": [
+      "js",
+      "expressError"
+    ],
+    "javascript/functions": [
+      "js",
+      "ts"
+    ],
+    "javascript/generics": [
+      "ts"
+    ],
+    "javascript/index": [
+      "js",
+      "ts"
+    ],
+    "javascript/javascript-fundamentals": [
+      "js",
+      "ts"
+    ],
+    "javascript/modules": [
+      "esm",
+      "js"
+    ],
+    "javascript/objects-and-arrays": [
+      "js",
+      "ts"
+    ],
+    "javascript/promise": [
+      "js",
+      "ts"
+    ],
+    "javascript/type-and-interface": [
+      "ts"
+    ],
+    "javascript/typescript-configuration": [
+      "tsconfig",
+      "ts"
+    ],
+    "javascript/typescript-fundamentals": [
+      "ts",
+      "zod"
+    ],
+    "javascript/variables-and-data-types": [
+      "js",
+      "ts"
+    ],
+    "nodejs/environment-variables": [
+      "process",
+      "zod"
+    ],
+    "nodejs/error-handling": [
+      "process",
+      "expressError"
+    ],
+    "nodejs/event-loop": [
+      "loop",
+      "timers"
+    ],
+    "nodejs/file-system": [
+      "fs"
+    ],
+    "nodejs/http-module": [
+      "http"
+    ],
+    "nodejs/index": [
+      "nodeIntro",
+      "node"
+    ],
+    "nodejs/introduction-to-node-js": [
+      "nodeIntro",
+      "node"
+    ],
+    "nodejs/node-js-architecture": [
+      "loop",
+      "worker"
+    ],
+    "nodejs/npm": [
+      "npm"
+    ],
+    "nodejs/package-management": [
+      "npm",
+      "esm"
+    ],
+    "projects/authentication-api": [
+      "auth",
+      "jose"
+    ],
+    "projects/authorization-api": [
+      "authz"
+    ],
+    "projects/basic-express-api": [
+      "express",
+      "expressAPI"
+    ],
+    "projects/complete-backend-starter": [
+      "express",
+      "jose",
+      "authz"
+    ],
+    "projects/crud-api": [
+      "express",
+      "repository"
+    ],
+    "projects/index": [
+      "express",
+      "restSecurity"
+    ],
+    "projects/personal-finance-management-api": [
+      "transaction",
+      "idempotency",
+      "authz"
+    ],
+    "projects/user-management-api": [
+      "authz",
+      "zod"
+    ],
+    "rest-api/api-response-format": [
+      "apiGuidelines",
+      "problem"
+    ],
+    "rest-api/api-versioning": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/endpoint-design": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/filtering": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/http-methods": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/http-status-codes": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/index": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/openapi-swagger": [
+      "openapi",
+      "httpSpec"
+    ],
+    "rest-api/pagination": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/query-parameters": [
+      "apiGuidelines",
+      "input"
+    ],
+    "rest-api/rate-limiting": [
+      "rateLimit",
+      "restSecurity"
+    ],
+    "rest-api/request-body": [
+      "expressAPI",
+      "input"
+    ],
+    "rest-api/rest-api-fundamentals": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/searching": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/sorting": [
+      "httpSpec",
+      "apiGuidelines"
+    ],
+    "rest-api/url-parameters": [
+      "express",
+      "input"
+    ],
+    "security/cors": [
+      "cors"
+    ],
+    "security/csrf-protection": [
+      "csrf"
+    ],
+    "security/helmet-and-security-headers": [
+      "helmet"
+    ],
+    "security/index": [
+      "restSecurity",
+      "input"
+    ],
+    "security/input-validation": [
+      "input",
+      "zod"
+    ],
+    "security/password-security": [
+      "password",
+      "auth"
+    ],
+    "security/rate-limiting": [
+      "rateLimit",
+      "auth"
+    ],
+    "security/secret-management": [
+      "secrets"
+    ],
+    "security/secure-file-upload": [
+      "upload"
+    ],
+    "security/security-fundamentals": [
+      "restSecurity",
+      "input"
+    ],
+    "security/sql-injection-prevention": [
+      "sqlInjection"
+    ],
+    "security/token-security": [
+      "jwt",
+      "session"
+    ],
+    "security/xss-prevention": [
+      "xss"
+    ],
+    "testing/api-testing": [
+      "test",
+      "http"
+    ],
+    "testing/authentication-testing": [
+      "test",
+      "auth"
+    ],
+    "testing/index": [
+      "test",
+      "http"
+    ],
+    "testing/integration-testing": [
+      "test",
+      "http"
+    ],
+    "testing/mocking": [
+      "test",
+      "di"
+    ],
+    "testing/test-coverage": [
+      "test",
+      "http"
+    ],
+    "testing/testing-fundamentals": [
+      "test",
+      "http"
+    ],
+    "testing/unit-testing": [
+      "test",
+      "http"
+    ]
+  }
+}

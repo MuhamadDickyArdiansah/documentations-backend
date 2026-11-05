@@ -1,0 +1,121 @@
+---
+title: "Prisma Schema"
+description: "Schema mendeskripsikan model, field, relasi, dan index."
+---
+
+## Overview
+
+Schema mendeskripsikan model, field, relasi, dan index. Nama field aplikasi bisa berbeda dari tabel dengan map, tanpa mengubah kontrak API.
+
+## Concept
+
+Fokus penerapan **Prisma Schema** adalah definisikan datasource. Tambahkan relation field. Gunakan index pada access pattern nyata. Contoh berikut memperlihatkan konteks kategori Database; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai PostgreSQL. Jalankan SQL pada database development melalui psql atau SQL editor.
+
+## Project Structure
+
+Simpan latihan Prisma Schema pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Definisikan datasource.
+2. Tambahkan relation field.
+3. Gunakan index pada access pattern nyata.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```prisma title="prisma-schema.prisma"
+// Prisma 6.19. Simpan pada prisma/schema.prisma.
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model Note {
+  id        String   @id @default(uuid()) @db.Uuid
+  ownerId   String   @db.Uuid
+  title     String   @db.VarChar(200)
+  createdAt DateTime @default(now())
+  @@index([ownerId, createdAt, id])
+}
+// Pada schema lengkap, hubungkan ownerId ke model User dengan foreign key.
+```
+
+### Konteks kategori
+
+```sql title="schema.sql"
+CREATE TABLE notes (
+  id uuid PRIMARY KEY,
+  owner_id uuid NOT NULL,
+  title varchar(200) NOT NULL CHECK (length(title) > 0),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX notes_owner_created_idx ON notes(owner_id, created_at DESC, id);
+```
+
+## Code Explanation
+
+Schema mendeskripsikan model, field, relasi, dan index. Nama field aplikasi bisa berbeda dari tabel dengan map, tanpa mengubah kontrak API. Dalam implementasi nyata, tambahkan relation field dan gunakan index pada access pattern nyata sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Prisma Schema, verifikasi langkah “Definisikan datasource” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tambahkan relation field.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan index pada access pattern nyata.
+
+## Testing
+
+Uji Prisma Schema dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “definisikan datasource” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Migrations](/docs/database/migrations)
+- [Database overview](/docs/database)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/current/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Prisma — Panduan Prisma ORM v6](https://www.prisma.io/docs/guides/upgrade-prisma-orm/v6)** — Konteks versi Prisma 6 yang digunakan pada cuplikan; API versi terbaru dapat berbeda.
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

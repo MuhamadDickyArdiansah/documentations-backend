@@ -1,0 +1,36 @@
+---
+title: "Testing"
+description: "Pelajari Testing melalui 7 topik yang terstruktur, dari konsep hingga praktik."
+icon: FlaskConical
+---
+
+## Tentang kategori ini
+
+Test yang baik memeriksa perilaku yang terlihat dan kegagalan yang relevan. Utamakan aturan bisnis, batas keamanan, dan kontrak endpoint daripada detail implementasi.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="Testing Fundamentals" href="/docs/testing/testing-fundamentals">Test yang baik memeriksa perilaku yang terlihat dan kegagalan yang relevan.</Card>
+<Card title="Unit Testing" href="/docs/testing/unit-testing">Unit test memeriksa logika kecil tanpa database atau jaringan.</Card>
+<Card title="Integration Testing" href="/docs/testing/integration-testing">Integration test memverifikasi beberapa komponen yang bekerja bersama.</Card>
+<Card title="API Testing" href="/docs/testing/api-testing">API test mengirim request HTTP nyata dan memeriksa status, header, serta body.</Card>
+<Card title="Mocking" href="/docs/testing/mocking">Mock mengganti dependensi yang lambat atau sulit dikontrol.</Card>
+<Card title="Authentication Testing" href="/docs/testing/authentication-testing">Test authentication harus mencakup credential salah, token kedaluwarsa, signature tidak valid, refresh replay, dan logout.</Card>
+<Card title="Test Coverage" href="/docs/testing/test-coverage">Coverage menunjukkan baris yang dieksekusi, bukan kualitas assertion.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Test Runner](https://nodejs.org/api/test.html)** — Unit test, subtest, mocking, dan coverage.
+- **Referensi dari [Node.js — HTTP API](https://nodejs.org/api/http.html)** — Request, response, server, dan batas koneksi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

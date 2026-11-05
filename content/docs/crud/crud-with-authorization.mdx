@@ -1,0 +1,129 @@
+---
+title: "CRUD with Authorization"
+description: "Authorization membatasi aksi serta record yang dapat diproses."
+---
+
+## Overview
+
+Authorization membatasi aksi serta record yang dapat diproses. Uji read, update, dan delete lintas owner karena ketiganya sering memiliki implementasi berbeda.
+
+## Concept
+
+Fokus penerapan **CRUD with Authorization** adalah terapkan permission. Scope query ke owner. Buat integration test untuk akses lintas user. Contoh berikut memperlihatkan konteks kategori CRUD Operations; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan CRUD with Authorization pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Terapkan permission.
+2. Scope query ke owner.
+3. Buat integration test untuk akses lintas user.
+
+### Contoh terfokus
+
+Jalankan berkas .mjs ini dari root repository agar path import examples sesuai.
+
+```js title="crud-with-authorization.mjs"
+import { can, owns } from "./examples/authorization/policy.mjs";
+const actor = { id: "u1", role: "user" };
+const note = { ownerId: "u2" };
+console.assert(can(actor, "notes:write"));
+console.assert(!owns(actor, note)); // Permission saja belum cukup.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/notes \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Belajar backend"}'
+```
+
+## Code Explanation
+
+Authorization membatasi aksi serta record yang dapat diproses. Uji read, update, dan delete lintas owner karena ketiganya sering memiliki implementasi berbeda. Dalam implementasi nyata, scope query ke owner dan buat integration test untuk akses lintas user sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk CRUD with Authorization, verifikasi langkah “Terapkan permission” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Scope query ke owner.
+- Batasi hak akses dan data yang dikirim ke client.
+- Buat integration test untuk akses lintas user.
+
+## Testing
+
+Uji CRUD with Authorization dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “terapkan permission” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [CRUD Introduction](/docs/crud/crud-introduction)
+- [CRUD Operations overview](/docs/crud)
+- [Prisma CRUD](https://www.prisma.io/docs/orm/prisma-client/queries/crud)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)** — Least privilege, default deny, dan pemeriksaan akses resource.
+- **Referensi dari [Martin Fowler — Repository](https://martinfowler.com/eaaCatalog/repository.html)** — Abstraksi akses persistence dalam bahasa domain.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

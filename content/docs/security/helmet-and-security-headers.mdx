@@ -1,0 +1,107 @@
+---
+title: "Helmet & Security Headers"
+description: "Security headers mengurangi beberapa kelas serangan browser."
+---
+
+## Overview
+
+Security headers mengurangi beberapa kelas serangan browser. Content Security Policy harus disesuaikan dengan asset dan script aplikasi agar tidak merusak fitur atau terlalu permisif.
+
+## Concept
+
+Fokus penerapan **Helmet & Security Headers** adalah pasang Helmet. Tinjau CSP. Aktifkan HSTS setelah HTTPS konsisten. Contoh berikut memperlihatkan konteks kategori Security; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Helmet & Security Headers pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pasang Helmet.
+2. Tinjau CSP.
+3. Aktifkan HSTS setelah HTTPS konsisten.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="helmet-and-security-headers.mjs"
+import helmet from "helmet";
+import express from "express";
+const app = express();
+app.use(helmet());
+app.disable("x-powered-by");
+```
+
+### Konteks kategori
+
+```js title="safe-compare.mjs"
+import { timingSafeEqual } from "node:crypto";
+export function equalDigest(a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false;
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+## Code Explanation
+
+Security headers mengurangi beberapa kelas serangan browser. Content Security Policy harus disesuaikan dengan asset dan script aplikasi agar tidak merusak fitur atau terlalu permisif. Dalam implementasi nyata, tinjau csp dan aktifkan hsts setelah https konsisten sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Helmet & Security Headers, verifikasi langkah “Pasang Helmet” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Tinjau CSP.
+- Batasi hak akses dan data yang dikirim ke client.
+- Aktifkan HSTS setelah HTTPS konsisten.
+
+## Testing
+
+Uji Helmet & Security Headers dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pasang helmet” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Rate Limiting](/docs/security/rate-limiting)
+- [Security overview](/docs/security)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Helmet — Dokumentasi resmi](https://helmet.js.org/)** — Middleware security headers dan konfigurasi CSP.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

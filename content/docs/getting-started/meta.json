@@ -1,0 +1,15 @@
+{
+  "title": "Getting Started",
+  "icon": "Compass",
+  "pages": [
+    "index",
+    "introduction",
+    "backend-roadmap",
+    "prerequisites",
+    "development-environment",
+    "node-js-installation",
+    "package-management",
+    "first-backend-application"
+  ],
+  "defaultOpen": false
+}

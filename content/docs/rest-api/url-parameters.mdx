@@ -1,0 +1,121 @@
+---
+title: "URL Parameters"
+description: "Parameter URL adalah string dan tidak otomatis aman sebagai ID."
+---
+
+## Overview
+
+Parameter URL adalah string dan tidak otomatis aman sebagai ID. Validasi format UUID atau integer sebelum mengakses repository.
+
+## Concept
+
+Fokus penerapan **URL Parameters** adalah parse ID. Return 400 untuk format salah. Return 404 jika resource tidak tersedia. Contoh berikut memperlihatkan konteks kategori REST API; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan URL Parameters pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Parse ID.
+2. Return 400 untuk format salah.
+3. Return 404 jika resource tidak tersedia.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="url-parameters.mjs"
+import { z } from "zod";
+export const paramsSchema = z.object({ id: z.uuid() });
+// paramsSchema.parse(req.params), sebelum repository dipanggil.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i http://localhost:4000/health
+# HTTP 200
+# {"data":{"status":"ok"}}
+```
+
+## Code Explanation
+
+Parameter URL adalah string dan tidak otomatis aman sebagai ID. Validasi format UUID atau integer sebelum mengakses repository. Dalam implementasi nyata, return 400 untuk format salah dan return 404 jika resource tidak tersedia sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk URL Parameters, verifikasi langkah “Parse ID” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Return 400 untuk format salah.
+- Batasi hak akses dan data yang dikirim ke client.
+- Return 404 jika resource tidak tersedia.
+
+## Testing
+
+Uji URL Parameters dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “parse id” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Query Parameters](/docs/rest-api/query-parameters)
+- [REST API overview](/docs/rest-api)
+- [HTTP Semantics — RFC 9110](https://www.rfc-editor.org/rfc/rfc9110)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Routing Guide](https://expressjs.com/en/guide/routing/)** — Route, router, dan pemetaan endpoint HTTP.
+- **Referensi dari [OWASP — Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)** — Allowlist, validasi bentuk, dan makna input.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

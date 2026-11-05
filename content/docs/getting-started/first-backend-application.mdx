@@ -1,0 +1,158 @@
+---
+title: "First Backend Application"
+description: "Buat API Express pertama yang dapat dijalankan, dipanggil dengan curl, dan dikembangkan secara bertahap."
+---
+
+## Overview
+
+Dalam panduan ini kamu membuat dua endpoint: health check dan daftar notes. Tidak ada database atau authentication pada latihan pertama agar alur HTTP mudah dipahami.
+
+## Concept
+
+Express menjalankan middleware sesuai urutan. JSON parser disiapkan lebih dulu, kemudian route, dan terakhir fallback 404. Setiap request harus mengirim response atau diteruskan ke handler berikutnya.
+
+## Prerequisites
+
+Node.js LTS, npm, dan terminal. Gunakan folder baru untuk latihan ini; jangan menjalankan npm init pada root handbook.
+
+## Installation
+
+```bash title="terminal"
+mkdir first-backend
+cd first-backend
+npm init -y
+npm pkg set type=module
+npm install express@5
+```
+
+
+Untuk varian TypeScript, tambahkan compiler dan runner:
+
+```bash title="terminal"
+npm install --save-dev typescript tsx @types/express @types/node
+```
+
+
+## Project Structure
+
+```text title="first-backend/"
+first-backend/
+  package.json
+  package-lock.json
+  app.js       # JavaScript, atau app.ts untuk TypeScript
+```
+
+
+## Implementation
+
+<Tabs items={['JavaScript', 'TypeScript']}>
+<Tab value="JavaScript">
+```js title="app.js"
+import express from 'express';
+const app = express();
+app.use(express.json({ limit: '16kb' }));
+app.get('/health', (_req, res) => {
+  res.json({ data: { status: 'ok' } });
+});
+app.get('/api/notes', (_req, res) => {
+  res.json({ data: [{ id: '1', title: 'Hello, backend!' }] });
+});
+app.use((_req, res) => {
+  res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Endpoint tidak ditemukan.' } });
+});
+app.listen(4000, '127.0.0.1', () => console.log('http://localhost:4000'));
+```
+</Tab>
+<Tab value="TypeScript">
+```ts title="app.ts"
+import express, { type Request, type Response } from 'express';
+const app = express();
+app.use(express.json({ limit: '16kb' }));
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({ data: { status: 'ok' } });
+});
+app.get('/api/notes', (_req: Request, res: Response) => {
+  res.json({ data: [{ id: '1', title: 'Hello, backend!' }] });
+});
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Endpoint tidak ditemukan.' } });
+});
+app.listen(4000, '127.0.0.1', () => console.log('http://localhost:4000'));
+```
+</Tab>
+</Tabs>
+
+<Tabs items={['JavaScript', 'TypeScript']}>
+<Tab value="JavaScript">
+```bash title="terminal"
+node --watch app.js
+```
+</Tab>
+<Tab value="TypeScript">
+```bash title="terminal"
+npx tsx watch app.ts
+```
+</Tab>
+</Tabs>
+
+## Code Explanation
+
+1. express() membuat aplikasi tanpa langsung membuka port.
+2. express.json membatasi ukuran body menjadi 16 KB dan membaca JSON untuk route berikutnya.
+3. GET /health mengembalikan status proses. Endpoint ini tidak mengecek database.
+4. GET /api/notes mengembalikan array statis. Ini belum CRUD atau data persisten.
+5. Fallback mengembalikan JSON 404 dengan kode error yang stabil.
+6. Server hanya mendengarkan loopback agar latihan tidak otomatis terbuka ke jaringan lain.
+
+## API Examples
+
+| Method | URL | Auth | Status | Deskripsi |
+| --- | --- | --- | --- | --- |
+| GET | /health | Tidak | 200 | Status proses |
+| GET | /api/notes | Tidak | 200 | Daftar notes statis |
+
+Endpoint GET tidak memerlukan request body.
+
+```bash title="terminal"
+curl -i http://localhost:4000/health
+curl -i http://localhost:4000/api/notes
+```
+
+
+```json title="200 — GET /api/notes"
+{"data":[{"id":"1","title":"Hello, backend!"}]}
+```
+
+
+## Error Handling
+
+EADDRINUSE berarti port 4000 sudah digunakan. Hentikan proses sebelumnya atau ganti port latihan. Path yang tidak dikenal mengembalikan 404. Penanganan malformed JSON secara terstruktur dibahas pada [Express Error Handling](/docs/express/error-handling).
+
+## Security & Best Practices
+
+<Callout type="warn" title="Sebelum menambah endpoint mutasi">Tambahkan validasi runtime, authentication, dan pemeriksaan ownership. Contoh GET publik ini tidak mengimplementasikan kontrol tersebut.</Callout>
+
+## Testing
+
+Panggil dua endpoint dengan curl dan pastikan status 200. Coba /missing dan pastikan status 404. Untuk aplikasi dengan test otomatis dan CRUD lengkap, jalankan contoh repository:
+
+```bash title="root handbook"
+npm run test:examples
+npm run examples
+```
+
+
+## Related Topics
+
+- [Routing](/docs/express/routing)
+- [Middleware](/docs/express/middleware)
+- [Complete Backend Starter](/docs/projects/complete-backend-starter)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Routing Guide](https://expressjs.com/en/guide/routing/)** — Route, router, dan pemetaan endpoint HTTP.
+- **Referensi dari [Express — API Reference](https://expressjs.com/en/api/)** — Kontrak API aplikasi, request, response, dan router.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

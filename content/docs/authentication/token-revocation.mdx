@@ -1,0 +1,136 @@
+---
+title: "Token Revocation"
+description: "JWT tidak otomatis dapat dicabut sebelum expiry."
+---
+
+## Overview
+
+JWT tidak otomatis dapat dicabut sebelum expiry. Revocation memerlukan denylist, versi sesi, atau pengecekan state sesi pada request.
+
+## Concept
+
+Fokus penerapan **Token Revocation** adalah tentukan batas waktu revocation. Simpan session ID pada klaim. Cek state saat akses berisiko tinggi. Contoh berikut memperlihatkan konteks kategori Authentication; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Token Revocation pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tentukan batas waktu revocation.
+2. Simpan session ID pada klaim.
+3. Cek state saat akses berisiko tinggi.
+
+### Contoh terfokus
+
+Cuplikan route memakai helper dan state dari examples/complete-backend/app.mjs. Implementasi lengkap yang dapat dijalankan ada pada [JWT Authentication](/docs/authentication/jwt-authentication). Cuplikan modul mandiri dapat disimpan sebagai .mjs; import examples menggunakan path relatif dari root repository.
+
+```js title="token-revocation.mjs"
+async function authenticate(req, res, next) {
+    const match = /^Bearer ([^\s]+)$/i.exec(req.headers.authorization || '');
+    if (!match) return error(res, 401, 'UNAUTHORIZED', 'Bearer token diperlukan.');
+    try {
+      const payload = await tokens.verify(match[1]);
+      const session = sessions.get(payload.sid);
+      const user = users.get(payload.sub);
+      if (!user || !session || session.userId !== user.id || session.revoked || session.expiresAt <= now()) throw new Error('Invalid session');
+      req.actor = { id: user.id, role: user.role };
+      req.sessionId = payload.sid;
+      next();
+    } catch { return error(res, 401, 'UNAUTHORIZED', 'Token tidak valid atau sesi berakhir.'); }
+  }
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"reader@example.com","password":"a-long-example-password"}'
+```
+
+## Code Explanation
+
+JWT tidak otomatis dapat dicabut sebelum expiry. Revocation memerlukan denylist, versi sesi, atau pengecekan state sesi pada request. Dalam implementasi nyata, simpan session id pada klaim dan cek state saat akses berisiko tinggi sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Token Revocation, verifikasi langkah “Tentukan batas waktu revocation” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Simpan session ID pada klaim.
+- Batasi hak akses dan data yang dikirim ke client.
+- Cek state saat akses berisiko tinggi.
+
+## Testing
+
+Uji Token Revocation dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tentukan batas waktu revocation” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Logout](/docs/authentication/logout)
+- [Authentication overview](/docs/authentication)
+- [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)** — Penyimpanan sesi, expiry, cookie, serta pencabutan sesi.
+- **Referensi dari [OWASP — REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)** — Kontrol keamanan pada endpoint dan data API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

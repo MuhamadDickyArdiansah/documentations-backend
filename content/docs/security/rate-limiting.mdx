@@ -1,0 +1,106 @@
+---
+title: "Rate Limiting"
+description: "Limiter perlu menentukan key, window, dan batas berdasarkan risiko endpoint."
+---
+
+## Overview
+
+Limiter perlu menentukan key, window, dan batas berdasarkan risiko endpoint. IP di balik proxy harus diambil sesuai konfigurasi proxy yang dipercaya, bukan header mentah.
+
+## Concept
+
+Fokus penerapan **Rate Limiting** adalah pisahkan limiter login. Gunakan shared store. Monitor false positive dan bypass. Contoh berikut memperlihatkan konteks kategori Security; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Rate Limiting pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pisahkan limiter login.
+2. Gunakan shared store.
+3. Monitor false positive dan bypass.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="rate-limiting.mjs"
+import { rateLimit } from "express-rate-limit";
+export const limiter = rateLimit({ windowMs: 900_000, limit: 30, standardHeaders: "draft-8", legacyHeaders: false });
+// Mount pada endpoint credential; gunakan shared store untuk multi-instance.
+```
+
+### Konteks kategori
+
+```js title="safe-compare.mjs"
+import { timingSafeEqual } from "node:crypto";
+export function equalDigest(a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false;
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+## Code Explanation
+
+Limiter perlu menentukan key, window, dan batas berdasarkan risiko endpoint. IP di balik proxy harus diambil sesuai konfigurasi proxy yang dipercaya, bukan header mentah. Dalam implementasi nyata, gunakan shared store dan monitor false positive dan bypass sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Rate Limiting, verifikasi langkah “Pisahkan limiter login” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Gunakan shared store.
+- Batasi hak akses dan data yang dikirim ke client.
+- Monitor false positive dan bypass.
+
+## Testing
+
+Uji Rate Limiting dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pisahkan limiter login” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Input Validation](/docs/security/input-validation)
+- [Security overview](/docs/security)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [express-rate-limit — Overview](https://express-rate-limit.mintlify.app/overview)** — Konfigurasi limiter dan dukungan penyimpanan counter.
+- **Referensi dari [OWASP — Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)** — Pengamanan login, credential, dan siklus identitas.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

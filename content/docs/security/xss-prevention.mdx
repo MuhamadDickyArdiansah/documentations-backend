@@ -1,0 +1,107 @@
+---
+title: "XSS Prevention"
+description: "XSS terjadi ketika data tak terpercaya dieksekusi sebagai kode pada browser."
+---
+
+## Overview
+
+XSS terjadi ketika data tak terpercaya dieksekusi sebagai kode pada browser. API tetap perlu menjaga tipe konten dan frontend perlu melakukan output encoding sesuai konteks.
+
+## Concept
+
+Fokus penerapan **XSS Prevention** adalah return application/json. Hindari innerHTML. Sanitasi rich text dengan library yang dirawat. Contoh berikut memperlihatkan konteks kategori Security; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan XSS Prevention pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Return application/json.
+2. Hindari innerHTML.
+3. Sanitasi rich text dengan library yang dirawat.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="xss-prevention.mjs"
+// Pada frontend: textContent memperlakukan data sebagai teks, bukan HTML.
+export function renderMessage(element, userMessage) {
+  element.textContent = userMessage;
+}
+// API: res.type("application/json").send(payload). Jangan render rich text mentah.
+```
+
+### Konteks kategori
+
+```js title="safe-compare.mjs"
+import { timingSafeEqual } from "node:crypto";
+export function equalDigest(a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false;
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+## Code Explanation
+
+XSS terjadi ketika data tak terpercaya dieksekusi sebagai kode pada browser. API tetap perlu menjaga tipe konten dan frontend perlu melakukan output encoding sesuai konteks. Dalam implementasi nyata, hindari innerhtml dan sanitasi rich text dengan library yang dirawat sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk XSS Prevention, verifikasi langkah “Return application/json” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Hindari innerHTML.
+- Batasi hak akses dan data yang dikirim ke client.
+- Sanitasi rich text dengan library yang dirawat.
+
+## Testing
+
+Uji XSS Prevention dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “return application/json” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [CSRF Protection](/docs/security/csrf-protection)
+- [Security overview](/docs/security)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Cross Site Scripting Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)** — Output encoding dan perlindungan data yang dirender browser.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

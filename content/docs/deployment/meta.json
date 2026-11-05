@@ -1,0 +1,18 @@
+{
+  "title": "Deployment",
+  "icon": "CloudUpload",
+  "pages": [
+    "index",
+    "environment-configuration",
+    "docker",
+    "docker-compose",
+    "ci-cd",
+    "github-actions",
+    "database-migration",
+    "production-configuration",
+    "health-checks",
+    "monitoring",
+    "deployment-checklist"
+  ],
+  "defaultOpen": false
+}

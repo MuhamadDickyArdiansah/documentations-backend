@@ -1,0 +1,41 @@
+---
+title: "CRUD Operations"
+description: "Pelajari CRUD Operations melalui 12 topik yang terstruktur, dari konsep hingga praktik."
+icon: Layers3
+---
+
+## Tentang kategori ini
+
+CRUD menerjemahkan lifecycle resource menjadi create, read, update, dan delete. Setiap operasi harus memiliki validasi, authorization, dan perilaku error yang terdokumentasi.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="CRUD Introduction" href="/docs/crud/crud-introduction">CRUD menerjemahkan lifecycle resource menjadi create, read, update, dan delete.</Card>
+<Card title="Create" href="/docs/crud/create">Create perlu menjaga constraint unik dan membedakan data input dari field yang dikelola server.</Card>
+<Card title="Read" href="/docs/crud/read">Read dapat berupa satu record atau daftar.</Card>
+<Card title="Update" href="/docs/crud/update">PATCH mengubah field tertentu, sehingga schema update harus membatasi field yang diizinkan.</Card>
+<Card title="Delete" href="/docs/crud/delete">Delete harus menentukan apakah data dihapus fisik atau ditandai terhapus.</Card>
+<Card title="CRUD with Prisma" href="/docs/crud/crud-with-prisma">Prisma membantu operasi bertipe tetapi query tetap perlu scope actor.</Card>
+<Card title="CRUD Validation" href="/docs/crud/crud-validation">Schema create dan update berbeda: create mewajibkan field, update menerima subset yang diizinkan.</Card>
+<Card title="Pagination & Filtering" href="/docs/crud/pagination-and-filtering">Pagination dan filter harus digabung dengan access scope yang konsisten.</Card>
+<Card title="Relational CRUD" href="/docs/crud/relational-crud">Operasi resource terkait harus memverifikasi akses ke seluruh parent dan child.</Card>
+<Card title="Soft Delete" href="/docs/crud/soft-delete">Soft delete menyimpan deletedAt dan menyaring record aktif.</Card>
+<Card title="CRUD with Authentication" href="/docs/crud/crud-with-authentication">Authentication menentukan actor pada setiap request CRUD.</Card>
+<Card title="CRUD with Authorization" href="/docs/crud/crud-with-authorization">Authorization membatasi aksi serta record yang dapat diproses.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Routing Guide](https://expressjs.com/en/guide/routing/)** — Route, router, dan pemetaan endpoint HTTP.
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

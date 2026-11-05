@@ -1,0 +1,106 @@
+---
+title: "Production Configuration"
+description: "Production memerlukan TLS, batas resource, observability, dan strategi restart."
+---
+
+## Overview
+
+Production memerlukan TLS, batas resource, observability, dan strategi restart. Debug output dan stack trace harus dinonaktifkan pada response publik.
+
+## Concept
+
+Fokus penerapan **Production Configuration** adalah tetapkan NODE_ENV. Konfigurasi reverse proxy. Batasi body, timeout, dan koneksi. Contoh berikut memperlihatkan konteks kategori Deployment; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Production Configuration pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tetapkan NODE_ENV.
+2. Konfigurasi reverse proxy.
+3. Batasi body, timeout, dan koneksi.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```bash title="production-configuration.bash"
+npm ci
+npm run build
+# Tetapkan NODE_ENV=production melalui platform sebelum npm start.
+# Website handbook tidak menjalankan API examples.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run build
+# Atur environment platform, lalu jalankan smoke test setelah deploy.
+```
+
+## Code Explanation
+
+Production memerlukan TLS, batas resource, observability, dan strategi restart. Debug output dan stack trace harus dinonaktifkan pada response publik. Dalam implementasi nyata, konfigurasi reverse proxy dan batasi body, timeout, dan koneksi sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Production Configuration, verifikasi langkah “Tetapkan NODE_ENV” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Konfigurasi reverse proxy.
+- Batasi hak akses dan data yang dikirim ke client.
+- Batasi body, timeout, dan koneksi.
+
+## Testing
+
+Uji Production Configuration dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tetapkan node_env” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Health Checks](/docs/deployment/health-checks)
+- [Deployment overview](/docs/deployment)
+- [Docker Node.js Guide](https://docs.docker.com/guides/nodejs/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Docker — Node.js Guide](https://docs.docker.com/guides/nodejs/)** — Container image, development workflow, dan deployment aplikasi Node.
+- **Referensi dari [Express — Production Performance and Reliability](https://expressjs.com/en/advanced/best-practice-performance/)** — Operasi server, reliability, dan konfigurasi production.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

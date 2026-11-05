@@ -1,0 +1,110 @@
+---
+title: "Testing Fundamentals"
+description: "Test yang baik memeriksa perilaku yang terlihat dan kegagalan yang relevan."
+---
+
+## Overview
+
+Test yang baik memeriksa perilaku yang terlihat dan kegagalan yang relevan. Utamakan aturan bisnis, batas keamanan, dan kontrak endpoint daripada detail implementasi.
+
+## Concept
+
+Fokus penerapan **Testing Fundamentals** adalah pisahkan unit dan integration. Gunakan fixture deterministik. Pastikan test dapat dijalankan independen. Contoh berikut memperlihatkan konteks kategori Testing; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Testing Fundamentals pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pisahkan unit dan integration.
+2. Gunakan fixture deterministik.
+3. Pastikan test dapat dijalankan independen.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="testing-fundamentals.mjs"
+import test from "node:test";
+import assert from "node:assert/strict";
+import { owns } from "./examples/authorization/policy.mjs";
+test("user lain tidak memiliki resource", () => {
+  assert.equal(owns({ id: "u2" }, { ownerId: "u1" }), false);
+});
+```
+
+### Konteks kategori
+
+```js title="policy.test.mjs"
+import test from "node:test";
+import assert from "node:assert/strict";
+const canRead = (actor, resource) => actor.id === resource.ownerId;
+test("menolak akses lintas owner", () => {
+  assert.equal(canRead({ id: "u2" }, { ownerId: "u1" }), false);
+});
+```
+
+## Code Explanation
+
+Test yang baik memeriksa perilaku yang terlihat dan kegagalan yang relevan. Utamakan aturan bisnis, batas keamanan, dan kontrak endpoint daripada detail implementasi. Dalam implementasi nyata, gunakan fixture deterministik dan pastikan test dapat dijalankan independen sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Testing Fundamentals, verifikasi langkah “Pisahkan unit dan integration” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Gunakan fixture deterministik.
+- Batasi hak akses dan data yang dikirim ke client.
+- Pastikan test dapat dijalankan independen.
+
+## Testing
+
+Uji Testing Fundamentals dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pisahkan unit dan integration” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Unit Testing](/docs/testing/unit-testing)
+- [Testing overview](/docs/testing)
+- [Node.js Test Runner](https://nodejs.org/api/test.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Test Runner](https://nodejs.org/api/test.html)** — Unit test, subtest, mocking, dan coverage.
+- **Referensi dari [Node.js — HTTP API](https://nodejs.org/api/http.html)** — Request, response, server, dan batas koneksi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

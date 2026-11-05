@@ -1,0 +1,126 @@
+---
+title: "Authentication Fundamentals"
+description: "Authentication membuktikan identitas, sedangkan authorization memutuskan izin."
+---
+
+## Overview
+
+Authentication membuktikan identitas, sedangkan authorization memutuskan izin. Credential harus diproses melalui TLS dan tidak boleh muncul dalam log atau URL.
+
+## Concept
+
+Fokus penerapan **Authentication Fundamentals** adalah tentukan session atau token. Pisahkan identitas dari izin. Terapkan rate limit pada login. Contoh berikut memperlihatkan konteks kategori Authentication; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Authentication Fundamentals pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tentukan session atau token.
+2. Pisahkan identitas dari izin.
+3. Terapkan rate limit pada login.
+
+### Contoh terfokus
+
+Cuplikan route memakai helper dan state dari examples/complete-backend/app.mjs. Implementasi lengkap yang dapat dijalankan ada pada [JWT Authentication](/docs/authentication/jwt-authentication). Cuplikan modul mandiri dapat disimpan sebagai .mjs; import examples menggunakan path relatif dari root repository.
+
+```text title="authentication-fundamentals.text"
+Credential -> verifier -> identitas actor -> sesi -> authorization policy
+             |                           |
+             Tolak jika salah            Expiry + revocation
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+curl -i -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"reader@example.com","password":"a-long-example-password"}'
+```
+
+## Code Explanation
+
+Authentication membuktikan identitas, sedangkan authorization memutuskan izin. Credential harus diproses melalui TLS dan tidak boleh muncul dalam log atau URL. Dalam implementasi nyata, pisahkan identitas dari izin dan terapkan rate limit pada login sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Authentication Fundamentals, verifikasi langkah “Tentukan session atau token” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Pisahkan identitas dari izin.
+- Batasi hak akses dan data yang dikirim ke client.
+- Terapkan rate limit pada login.
+
+## Testing
+
+Uji Authentication Fundamentals dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tentukan session atau token” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Password Hashing](/docs/authentication/password-hashing)
+- [Authentication overview](/docs/authentication)
+- [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)** — Pengamanan login, credential, dan siklus identitas.
+- **Referensi dari [OWASP — Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)** — Penyimpanan sesi, expiry, cookie, serta pencabutan sesi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

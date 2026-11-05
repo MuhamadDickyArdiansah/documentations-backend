@@ -1,0 +1,106 @@
+---
+title: "NPM"
+description: "npm mengelola paket, scripts, dan registry."
+---
+
+## Overview
+
+npm mengelola paket, scripts, dan registry. Lifecycle scripts dari dependensi adalah kode yang berjalan di mesin developer atau CI, jadi tinjau perubahan lockfile.
+
+## Concept
+
+Fokus penerapan **NPM** adalah gunakan npm ci dalam CI. Jalankan npm audit. Periksa scripts sebelum menambah dependency. Contoh berikut memperlihatkan konteks kategori Node.js; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan NPM pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan npm ci dalam CI.
+2. Jalankan npm audit.
+3. Periksa scripts sebelum menambah dependency.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```bash title="npm.bash"
+npm ls --depth=0
+npm audit
+npm ci
+```
+
+### Konteks kategori
+
+```js title="server.mjs"
+import { createServer } from "node:http";
+const server = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ data: { status: "ok" } }));
+});
+server.listen(4000, "127.0.0.1");
+```
+
+## Code Explanation
+
+npm mengelola paket, scripts, dan registry. Lifecycle scripts dari dependensi adalah kode yang berjalan di mesin developer atau CI, jadi tinjau perubahan lockfile. Dalam implementasi nyata, jalankan npm audit dan periksa scripts sebelum menambah dependency sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk NPM, verifikasi langkah “Gunakan npm ci dalam CI” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Jalankan npm audit.
+- Batasi hak akses dan data yang dikirim ke client.
+- Periksa scripts sebelum menambah dependency.
+
+## Testing
+
+Uji NPM dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan npm ci dalam ci” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Environment Variables](/docs/nodejs/environment-variables)
+- [Node.js overview](/docs/nodejs)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [npm — npm ci](https://docs.npmjs.com/cli/v11/commands/npm-ci/)** — Instalasi deterministik dari lockfile.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

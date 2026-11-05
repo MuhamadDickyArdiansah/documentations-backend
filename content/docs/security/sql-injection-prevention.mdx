@@ -1,0 +1,106 @@
+---
+title: "SQL Injection Prevention"
+description: "Parameterized query memisahkan query dan data."
+---
+
+## Overview
+
+Parameterized query memisahkan query dan data. Identifier seperti nama kolom sering tidak dapat diparameterisasi, sehingga harus dipilih dari allowlist.
+
+## Concept
+
+Fokus penerapan **SQL Injection Prevention** adalah gunakan query parameter. Hindari string concatenation. Jangan gunakan unsafe raw query untuk input user. Contoh berikut memperlihatkan konteks kategori Security; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan SQL Injection Prevention pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan query parameter.
+2. Hindari string concatenation.
+3. Jangan gunakan unsafe raw query untuk input user.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```sql title="sql-injection-prevention.sql"
+-- Prepared statement PostgreSQL, bukan interpolasi string dari client.
+PREPARE note_for_owner(uuid, uuid) AS
+SELECT id, title FROM user_notes WHERE id = $1 AND owner_id = $2;
+-- Panggil menggunakan driver dengan parameter terpisah.
+```
+
+### Konteks kategori
+
+```js title="safe-compare.mjs"
+import { timingSafeEqual } from "node:crypto";
+export function equalDigest(a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false;
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+## Code Explanation
+
+Parameterized query memisahkan query dan data. Identifier seperti nama kolom sering tidak dapat diparameterisasi, sehingga harus dipilih dari allowlist. Dalam implementasi nyata, hindari string concatenation dan jangan gunakan unsafe raw query untuk input user sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk SQL Injection Prevention, verifikasi langkah “Gunakan query parameter” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Hindari string concatenation.
+- Batasi hak akses dan data yang dikirim ke client.
+- Jangan gunakan unsafe raw query untuk input user.
+
+## Testing
+
+Uji SQL Injection Prevention dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan query parameter” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [XSS Prevention](/docs/security/xss-prevention)
+- [Security overview](/docs/security)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — SQL Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)** — Parameterized queries dan pemisahan query dari input.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

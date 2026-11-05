@@ -1,0 +1,131 @@
+---
+title: "Admin/User Permissions"
+description: "Admin tetap perlu batas akses yang eksplisit."
+---
+
+## Overview
+
+Admin tetap perlu batas akses yang eksplisit. Superadmin tanpa scope mudah menyebabkan kebocoran antar tenant dan perubahan tak sengaja.
+
+## Concept
+
+Fokus penerapan **Admin/User Permissions** adalah pisahkan read dan write. Lindungi operasi admin dengan reauthentication. Catat semua perubahan hak akses. Contoh berikut memperlihatkan konteks kategori Authorization; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Admin/User Permissions pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Pisahkan read dan write.
+2. Lindungi operasi admin dengan reauthentication.
+3. Catat semua perubahan hak akses.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="admin-user-permissions.mjs"
+const permissions = {
+  user: new Set(["profile:read:self", "profile:update:self"]),
+  admin: new Set(["users:read", "users:disable"]),
+};
+export const can = (role, action) => permissions[role]?.has(action) ?? false;
+```
+
+### Konteks kategori
+
+```js title="policy.mjs"
+export function canUpdateNote(actor, note) {
+  if (!actor || !note) return false;
+  return actor.id === note.ownerId;
+}
+console.assert(canUpdateNote({ id: "u1" }, { ownerId: "u1" }));
+console.assert(!canUpdateNote({ id: "u2" }, { ownerId: "u1" }));
+```
+
+## Code Explanation
+
+Admin tetap perlu batas akses yang eksplisit. Superadmin tanpa scope mudah menyebabkan kebocoran antar tenant dan perubahan tak sengaja. Dalam implementasi nyata, lindungi operasi admin dengan reauthentication dan catat semua perubahan hak akses sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Admin/User Permissions, verifikasi langkah “Pisahkan read dan write” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="warn" title="Batas implementasi">Contoh adalah sarana belajar dan bukan audit keamanan. Untuk production, gunakan TLS, shared persistent storage, rate limit terdistribusi, serta pengelolaan secret yang sesuai infrastruktur.</Callout>
+
+- Lindungi operasi admin dengan reauthentication.
+- Batasi hak akses dan data yang dikirim ke client.
+- Catat semua perubahan hak akses.
+
+## Testing
+
+Uji Admin/User Permissions dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “pisahkan read dan write” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Authorization Fundamentals](/docs/authorization/authorization-fundamentals)
+- [Authorization overview](/docs/authorization)
+- [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)** — Least privilege, default deny, dan pemeriksaan akses resource.
+- **Referensi dari [OWASP — REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)** — Kontrol keamanan pada endpoint dan data API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,41 @@
+---
+title: "Database"
+description: "Pelajari Database melalui 12 topik yang terstruktur, dari konsep hingga praktik."
+icon: Database
+---
+
+## Tentang kategori ini
+
+Database menjaga integritas data melalui constraint dan transaksi. Validasi aplikasi membantu UX, tetapi constraint tetap diperlukan ketika banyak request berjalan bersamaan.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="Database Fundamentals" href="/docs/database/database-fundamentals">Database menjaga integritas data melalui constraint dan transaksi.</Card>
+<Card title="SQL & NoSQL" href="/docs/database/sql-and-nosql">SQL menawarkan relasi dan query terstruktur; NoSQL memiliki banyak model berbeda.</Card>
+<Card title="PostgreSQL" href="/docs/database/postgresql">PostgreSQL menyediakan transaksi, constraint, JSONB, dan index yang beragam.</Card>
+<Card title="Database Design" href="/docs/database/database-design">Desain schema dimulai dari invariant domain dan relasi.</Card>
+<Card title="Database Relationships" href="/docs/database/database-relationships">Foreign key menjaga hubungan antar record.</Card>
+<Card title="Prisma ORM" href="/docs/database/prisma-orm">Prisma menyediakan schema dan client bertipe.</Card>
+<Card title="Prisma Schema" href="/docs/database/prisma-schema">Schema mendeskripsikan model, field, relasi, dan index.</Card>
+<Card title="Migrations" href="/docs/database/migrations">Migration adalah riwayat perubahan struktur database.</Card>
+<Card title="Seeding" href="/docs/database/seeding">Seed menciptakan data awal yang dapat diulang.</Card>
+<Card title="Transactions" href="/docs/database/transactions">Transaksi memastikan sejumlah write berhasil atau gagal bersama.</Card>
+<Card title="Indexing" href="/docs/database/indexing">Index mempercepat pembacaan tertentu tetapi menambah biaya write dan storage.</Card>
+<Card title="Query Optimization" href="/docs/database/query-optimization">Mulai optimasi dengan query plan dan metrik nyata.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [PostgreSQL — Official Documentation](https://www.postgresql.org/docs/current/)** — Model relasional, SQL, dan operasi database.
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

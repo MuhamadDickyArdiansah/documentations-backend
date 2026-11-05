@@ -1,0 +1,130 @@
+---
+title: "Application Structure"
+description: "Struktur per fitur menjaga route, schema, dan service berdekatan."
+---
+
+## Overview
+
+Struktur per fitur menjaga route, schema, dan service berdekatan. Infrastruktur bersama seperti database client diletakkan di module terpisah.
+
+## Concept
+
+Fokus penerapan **Application Structure** adalah kelompokkan auth dan notes. Export factory app. Jangan membuka koneksi saat import fungsi domain. Contoh berikut memperlihatkan konteks kategori Express.js; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Application Structure pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Kelompokkan auth dan notes.
+2. Export factory app.
+3. Jangan membuka koneksi saat import fungsi domain.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```text title="application-structure.text"
+app.mjs          # Factory app, routes, middleware
+server.mjs       # Buka port dan graceful shutdown
+features/notes/  # Controller, schema, service, repository
+tests/           # Unit dan integration tests
+```
+
+### Konteks kategori
+
+```js title="app.mjs"
+import express from "express";
+const app = express();
+app.use(express.json({ limit: "16kb" }));
+app.get("/health", (_req, res) => res.json({ data: { status: "ok" } }));
+app.use((_req, res) => res.status(404).json({ error: { code: "NOT_FOUND" } }));
+app.listen(4000, "127.0.0.1");
+```
+
+## Code Explanation
+
+Struktur per fitur menjaga route, schema, dan service berdekatan. Infrastruktur bersama seperti database client diletakkan di module terpisah. Dalam implementasi nyata, export factory app dan jangan membuka koneksi saat import fungsi domain sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Application Structure, verifikasi langkah “Kelompokkan auth dan notes” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Export factory app.
+- Batasi hak akses dan data yang dikirim ke client.
+- Jangan membuka koneksi saat import fungsi domain.
+
+## Testing
+
+Uji Application Structure dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “kelompokkan auth dan notes” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Routing](/docs/express/routing)
+- [Express.js overview](/docs/express)
+- [Express Guide](https://expressjs.com/en/guide/routing.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Martin Fowler — Service Layer](https://martinfowler.com/eaaCatalog/serviceLayer.html)** — Boundary service dan orkestrasi operasi bisnis.
+- **Referensi dari [Martin Fowler — Repository](https://martinfowler.com/eaaCatalog/repository.html)** — Abstraksi akses persistence dalam bahasa domain.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

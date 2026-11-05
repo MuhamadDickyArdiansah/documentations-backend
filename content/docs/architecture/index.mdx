@@ -1,0 +1,40 @@
+---
+title: "Architecture & Best Practices"
+description: "Pelajari Architecture & Best Practices melalui 11 topik yang terstruktur, dari konsep hingga praktik."
+icon: Blocks
+---
+
+## Tentang kategori ini
+
+MVC memisahkan model, representasi, dan controller. Dalam JSON API, representasi biasanya DTO, sedangkan aturan bisnis sebaiknya tetap berada di service atau domain.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="MVC Architecture" href="/docs/architecture/mvc-architecture">MVC memisahkan model, representasi, dan controller.</Card>
+<Card title="Layered Architecture" href="/docs/architecture/layered-architecture">Layer bergantung ke abstraksi yang lebih stabil.</Card>
+<Card title="Clean Architecture" href="/docs/architecture/clean-architecture">Clean Architecture menempatkan aturan bisnis di pusat dan infrastruktur di luar.</Card>
+<Card title="SOLID Principles" href="/docs/architecture/solid-principles">SOLID membantu mengevaluasi perubahan dan substitusi.</Card>
+<Card title="Separation of Concerns" href="/docs/architecture/separation-of-concerns">Setiap bagian kode perlu memiliki tanggung jawab yang jelas.</Card>
+<Card title="Service Pattern" href="/docs/architecture/service-pattern">Service mengorkestrasi satu use case dan transaksi terkait.</Card>
+<Card title="Repository Pattern" href="/docs/architecture/repository-pattern">Repository menyatakan operasi penyimpanan dalam bahasa domain.</Card>
+<Card title="Dependency Injection" href="/docs/architecture/dependency-injection">Dependency injection berarti menyerahkan dependensi dari luar.</Card>
+<Card title="Error Handling Standards" href="/docs/architecture/error-handling-standards">Standar error menghubungkan error domain ke status HTTP secara konsisten.</Card>
+<Card title="Logging Standards" href="/docs/architecture/logging-standards">Log operasional harus menjawab apa yang gagal dan di request mana.</Card>
+<Card title="Code Organization" href="/docs/architecture/code-organization">Organisasi per fitur membuat perubahan use case lebih lokal.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Robert C. Martin — The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)** — Aturan dependensi dan pemisahan domain dari infrastruktur.
+- **Referensi dari [Martin Fowler — Service Layer](https://martinfowler.com/eaaCatalog/serviceLayer.html)** — Boundary service dan orkestrasi operasi bisnis.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

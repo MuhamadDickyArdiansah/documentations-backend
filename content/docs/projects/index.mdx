@@ -1,0 +1,36 @@
+---
+title: "Backend Project References"
+description: "Pelajari Backend Project References melalui 7 topik yang terstruktur, dari konsep hingga praktik."
+icon: FolderGit2
+---
+
+## Tentang kategori ini
+
+Project dasar memperlihatkan pemisahan app dan server, JSON parsing, endpoint resource, serta error handler. Mulai dari kontrak kecil yang dapat diuji tanpa database.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="Basic Express API" href="/docs/projects/basic-express-api">Project dasar memperlihatkan pemisahan app dan server, JSON parsing, endpoint resource, serta error handler.</Card>
+<Card title="Authentication API" href="/docs/projects/authentication-api">Project authentication memperlihatkan register, login, token verification, refresh rotation, dan logout.</Card>
+<Card title="Authorization API" href="/docs/projects/authorization-api">Project authorization menambahkan permission dan ownership setelah identitas terbukti.</Card>
+<Card title="CRUD API" href="/docs/projects/crud-api">Project CRUD menyediakan create, list, detail, update, dan delete untuk notes milik user.</Card>
+<Card title="User Management API" href="/docs/projects/user-management-api">User management memerlukan kebijakan akses eksplisit untuk membaca dan mengubah profil.</Card>
+<Card title="Personal Finance Management API" href="/docs/projects/personal-finance-management-api">Pencatatan keuangan membutuhkan presisi angka, isolasi data per user, dan transaksi.</Card>
+<Card title="Complete Backend Starter" href="/docs/projects/complete-backend-starter">Starter menggabungkan HTTP, auth, authorization, CRUD, dan integration test.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Routing Guide](https://expressjs.com/en/guide/routing/)** — Route, router, dan pemetaan endpoint HTTP.
+- **Referensi dari [OWASP — REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)** — Kontrol keamanan pada endpoint dan data API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

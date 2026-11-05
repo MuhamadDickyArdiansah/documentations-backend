@@ -1,0 +1,108 @@
+---
+title: "Indexing"
+description: "Index mempercepat pembacaan tertentu tetapi menambah biaya write dan storage."
+---
+
+## Overview
+
+Index mempercepat pembacaan tertentu tetapi menambah biaya write dan storage. Urutan kolom composite index harus sesuai filter dan sort query yang sering dijalankan.
+
+## Concept
+
+Fokus penerapan **Indexing** adalah periksa EXPLAIN. Buat index untuk foreign key yang sering di-query. Hapus index redundan setelah pengukuran. Contoh berikut memperlihatkan konteks kategori Database; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai PostgreSQL. Jalankan SQL pada database development melalui psql atau SQL editor.
+
+## Project Structure
+
+Simpan latihan Indexing pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Periksa EXPLAIN.
+2. Buat index untuk foreign key yang sering di-query.
+3. Hapus index redundan setelah pengukuran.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```sql title="indexing.sql"
+CREATE INDEX user_notes_owner_title_idx ON user_notes(owner_id, title, id);
+EXPLAIN SELECT id, title FROM user_notes
+WHERE owner_id = '00000000-0000-4000-8000-000000000001'
+ORDER BY title, id LIMIT 20;
+```
+
+### Konteks kategori
+
+```sql title="schema.sql"
+CREATE TABLE notes (
+  id uuid PRIMARY KEY,
+  owner_id uuid NOT NULL,
+  title varchar(200) NOT NULL CHECK (length(title) > 0),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX notes_owner_created_idx ON notes(owner_id, created_at DESC, id);
+```
+
+## Code Explanation
+
+Index mempercepat pembacaan tertentu tetapi menambah biaya write dan storage. Urutan kolom composite index harus sesuai filter dan sort query yang sering dijalankan. Dalam implementasi nyata, buat index untuk foreign key yang sering di-query dan hapus index redundan setelah pengukuran sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Indexing, verifikasi langkah “Periksa EXPLAIN” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Buat index untuk foreign key yang sering di-query.
+- Batasi hak akses dan data yang dikirim ke client.
+- Hapus index redundan setelah pengukuran.
+
+## Testing
+
+Uji Indexing dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “periksa explain” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Query Optimization](/docs/database/query-optimization)
+- [Database overview](/docs/database)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/current/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [PostgreSQL — Indexes](https://www.postgresql.org/docs/current/indexes.html)** — Jenis index, manfaat pembacaan, dan biaya write.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

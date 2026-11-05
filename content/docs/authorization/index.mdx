@@ -1,0 +1,37 @@
+---
+title: "Authorization"
+description: "Pelajari Authorization melalui 8 topik yang terstruktur, dari konsep hingga praktik."
+icon: ShieldCheck
+---
+
+## Tentang kategori ini
+
+Authorization dijalankan di server untuk setiap aksi. Default deny lebih aman: akses diberikan hanya ketika policy cocok, bukan saat tidak ada larangan.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="Authorization Fundamentals" href="/docs/authorization/authorization-fundamentals">Authorization dijalankan di server untuk setiap aksi.</Card>
+<Card title="Role-Based Access Control" href="/docs/authorization/role-based-access-control">RBAC memetakan role ke permission lalu permission ke aksi.</Card>
+<Card title="Permission-Based Access Control" href="/docs/authorization/permission-based-access-control">Permission menyatakan kemampuan spesifik seperti notes:read.</Card>
+<Card title="Resource Ownership" href="/docs/authorization/resource-ownership">Izin terhadap jenis resource belum menjamin izin terhadap record tertentu.</Card>
+<Card title="Protected Routes" href="/docs/authorization/protected-routes">Protected route membutuhkan authentication sebelum policy authorization.</Card>
+<Card title="Authorization Middleware" href="/docs/authorization/authorization-middleware">Middleware policy menerjemahkan permission menjadi keputusan akses yang konsisten.</Card>
+<Card title="Role & Permission Schema" href="/docs/authorization/role-and-permission-schema">Relasi user-role dan role-permission biasanya many-to-many.</Card>
+<Card title="Admin/User Permissions" href="/docs/authorization/admin-user-permissions">Admin tetap perlu batas akses yang eksplisit.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)** — Least privilege, default deny, dan pemeriksaan akses resource.
+- **Referensi dari [OWASP — REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)** — Kontrol keamanan pada endpoint dan data API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

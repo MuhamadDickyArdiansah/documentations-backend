@@ -1,0 +1,106 @@
+---
+title: "Promise"
+description: "Promise mewakili hasil operasi yang akan selesai."
+---
+
+## Overview
+
+Promise mewakili hasil operasi yang akan selesai. Promise.all gagal ketika satu operasi ditolak; Promise.allSettled memberi hasil semua operasi, termasuk yang gagal.
+
+## Concept
+
+Fokus penerapan **Promise** adalah return promise dari fungsi. Tangani rejection. Gunakan allSettled untuk tugas independen. Contoh berikut memperlihatkan konteks kategori JavaScript & TypeScript; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Promise pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Return promise dari fungsi.
+2. Tangani rejection.
+3. Gunakan allSettled untuk tugas independen.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="promise.mjs"
+const results = await Promise.allSettled([
+  Promise.resolve("ok"),
+  Promise.reject(new Error("Provider unavailable")),
+]);
+console.log(results.map(result => result.status)); // fulfilled, rejected
+```
+
+### Konteks kategori
+
+```js title="example.mjs"
+const notes = [{ id: 1, title: "Belajar backend", done: false }];
+const titles = notes.filter(note => !note.done).map(note => note.title);
+console.log(titles);
+```
+
+## Code Explanation
+
+Promise mewakili hasil operasi yang akan selesai. Promise.all gagal ketika satu operasi ditolak; Promise.allSettled memberi hasil semua operasi, termasuk yang gagal. Dalam implementasi nyata, tangani rejection dan gunakan allsettled untuk tugas independen sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Promise, verifikasi langkah “Return promise dari fungsi” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Tangani rejection.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan allSettled untuk tugas independen.
+
+## Testing
+
+Uji Promise dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “return promise dari fungsi” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Async/Await](/docs/javascript/async-await)
+- [JavaScript & TypeScript overview](/docs/javascript)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [MDN Web Docs — JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)** — Sintaks, tipe data, fungsi, object, modules, dan asynchronous programming.
+- **Referensi dari [Microsoft TypeScript — Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)** — Sistem tipe, narrowing, interface, dan generic.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,105 @@
+---
+title: "Variables & Data Types"
+description: "const melarang reassignment tetapi tidak membuat object immutable."
+---
+
+## Overview
+
+const melarang reassignment tetapi tidak membuat object immutable. Nilai null berarti kosong secara eksplisit, sedangkan undefined berarti nilai belum disediakan.
+
+## Concept
+
+Fokus penerapan **Variables & Data Types** adalah utamakan const. Gunakan let untuk nilai yang berubah. Validasi data dari request pada runtime. Contoh berikut memperlihatkan konteks kategori JavaScript & TypeScript; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Variables & Data Types pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Utamakan const.
+2. Gunakan let untuk nilai yang berubah.
+3. Validasi data dari request pada runtime.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="variables-and-data-types.mjs"
+const config = { port: 4000 };
+config.port = 5000; // const tidak membuat object immutable
+console.log(typeof config.port); // number
+console.log(null === undefined); // false
+```
+
+### Konteks kategori
+
+```js title="example.mjs"
+const notes = [{ id: 1, title: "Belajar backend", done: false }];
+const titles = notes.filter(note => !note.done).map(note => note.title);
+console.log(titles);
+```
+
+## Code Explanation
+
+const melarang reassignment tetapi tidak membuat object immutable. Nilai null berarti kosong secara eksplisit, sedangkan undefined berarti nilai belum disediakan. Dalam implementasi nyata, gunakan let untuk nilai yang berubah dan validasi data dari request pada runtime sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Variables & Data Types, verifikasi langkah “Utamakan const” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Gunakan let untuk nilai yang berubah.
+- Batasi hak akses dan data yang dikirim ke client.
+- Validasi data dari request pada runtime.
+
+## Testing
+
+Uji Variables & Data Types dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “utamakan const” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Functions](/docs/javascript/functions)
+- [JavaScript & TypeScript overview](/docs/javascript)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [MDN Web Docs — JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)** — Sintaks, tipe data, fungsi, object, modules, dan asynchronous programming.
+- **Referensi dari [Microsoft TypeScript — Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)** — Sistem tipe, narrowing, interface, dan generic.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

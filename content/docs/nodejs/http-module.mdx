@@ -1,0 +1,111 @@
+---
+title: "HTTP Module"
+description: "node:http menyediakan primitive request dan response tanpa framework."
+---
+
+## Overview
+
+node:http menyediakan primitive request dan response tanpa framework. Kamu bertanggung jawab terhadap parsing body, batas ukuran, timeout, routing, dan error.
+
+## Concept
+
+Fokus penerapan **HTTP Module** adalah tetapkan Content-Type. Batasi request body. Akhiri setiap response dengan end. Contoh berikut memperlihatkan konteks kategori Node.js; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan HTTP Module pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Tetapkan Content-Type.
+2. Batasi request body.
+3. Akhiri setiap response dengan end.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="http-module.mjs"
+import { createServer } from "node:http";
+const server = createServer((req, res) => {
+  const ok = req.method === "GET" && req.url === "/health";
+  res.writeHead(ok ? 200 : 404, { "Content-Type": "application/json" });
+  res.end(JSON.stringify(ok ? { data: { status: "ok" } } : { error: { code: "NOT_FOUND" } }));
+});
+server.requestTimeout = 10_000;
+server.listen(4000, "127.0.0.1");
+```
+
+### Konteks kategori
+
+```js title="server.mjs"
+import { createServer } from "node:http";
+const server = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ data: { status: "ok" } }));
+});
+server.listen(4000, "127.0.0.1");
+```
+
+## Code Explanation
+
+node:http menyediakan primitive request dan response tanpa framework. Kamu bertanggung jawab terhadap parsing body, batas ukuran, timeout, routing, dan error. Dalam implementasi nyata, batasi request body dan akhiri setiap response dengan end sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk HTTP Module, verifikasi langkah “Tetapkan Content-Type” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Batasi request body.
+- Batasi hak akses dan data yang dikirim ke client.
+- Akhiri setiap response dengan end.
+
+## Testing
+
+Uji HTTP Module dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “tetapkan content-type” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Error Handling](/docs/nodejs/error-handling)
+- [Node.js overview](/docs/nodejs)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — HTTP API](https://nodejs.org/api/http.html)** — Request, response, server, dan batas koneksi.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

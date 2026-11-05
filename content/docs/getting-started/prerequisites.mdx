@@ -1,0 +1,106 @@
+---
+title: "Prerequisites"
+description: "Kamu perlu memahami terminal, Git, JSON, serta fungsi JavaScript."
+---
+
+## Overview
+
+Kamu perlu memahami terminal, Git, JSON, serta fungsi JavaScript. HTTP bekerja dengan request dan response; server tidak otomatis mengetahui identitas pengirim.
+
+## Concept
+
+Fokus penerapan **Prerequisites** adalah latih navigasi folder lewat terminal. Baca object JSON. Gunakan Git untuk menyimpan perubahan. Contoh berikut memperlihatkan konteks kategori Getting Started; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Pemahaman dasar fungsi JavaScript dan object JSON.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Prerequisites pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Latih navigasi folder lewat terminal.
+2. Baca object JSON.
+3. Gunakan Git untuk menyimpan perubahan.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="prerequisites.mjs"
+const double = value => value * 2;
+const data = JSON.parse('{"value":21}');
+console.assert(double(data.value) === 42);
+// Simpan sebagai exercise.mjs, lalu: node exercise.mjs
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+node --version
+npm --version
+npm init -y
+npm install express
+```
+
+## Code Explanation
+
+Kamu perlu memahami terminal, Git, JSON, serta fungsi JavaScript. HTTP bekerja dengan request dan response; server tidak otomatis mengetahui identitas pengirim. Dalam implementasi nyata, baca object json dan gunakan git untuk menyimpan perubahan sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Prerequisites, verifikasi langkah “Latih navigasi folder lewat terminal” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Baca object JSON.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan Git untuk menyimpan perubahan.
+
+## Testing
+
+Uji Prerequisites dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “latih navigasi folder lewat terminal” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Development Environment](/docs/getting-started/development-environment)
+- [Getting Started overview](/docs/getting-started)
+- [Node.js Learn](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Node.js — Introduction to Node.js](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)** — Model runtime dan dasar penggunaan Node.js.
+- **Referensi dari [MDN Web Docs — JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)** — Sintaks, tipe data, fungsi, object, modules, dan asynchronous programming.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

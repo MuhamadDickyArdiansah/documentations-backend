@@ -1,0 +1,105 @@
+---
+title: "WebSockets"
+description: "WebSocket mempertahankan koneksi dua arah."
+---
+
+## Overview
+
+WebSocket mempertahankan koneksi dua arah. Authentication saat handshake perlu dilengkapi authorization per pesan dan kebijakan ketika sesi kedaluwarsa.
+
+## Concept
+
+Fokus penerapan **WebSockets** adalah validasi origin. Batasi ukuran pesan. Gunakan heartbeat dan reconnect dengan backoff. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan WebSockets pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Validasi origin.
+2. Batasi ukuran pesan.
+3. Gunakan heartbeat dan reconnect dengan backoff.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```json title="websockets.json"
+{"event":"notes:updated","version":1,"data":{"id":"<note-id>"}}
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+WebSocket mempertahankan koneksi dua arah. Authentication saat handshake perlu dilengkapi authorization per pesan dan kebijakan ketika sesi kedaluwarsa. Dalam implementasi nyata, batasi ukuran pesan dan gunakan heartbeat dan reconnect dengan backoff sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk WebSockets, verifikasi langkah “Validasi origin” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Batasi ukuran pesan.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan heartbeat dan reconnect dengan backoff.
+
+## Testing
+
+Uji WebSockets dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “validasi origin” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Notifications](/docs/advanced/notifications)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [MDN Web Docs — WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)** — Koneksi dua arah dan lifecycle komunikasi realtime.
+- **Referensi dari [OWASP — Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)** — Least privilege, default deny, dan pemeriksaan akses resource.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

@@ -1,0 +1,109 @@
+---
+title: "GitHub Actions"
+description: "Workflow menjalankan job pada event repository."
+---
+
+## Overview
+
+Workflow menjalankan job pada event repository. Tetapkan permissions minimum dan jangan memberikan secret ke kode pull request yang belum dipercaya.
+
+## Concept
+
+Fokus penerapan **GitHub Actions** adalah gunakan npm ci. Cache package download. Pisahkan job validasi dan deploy. Contoh berikut memperlihatkan konteks kategori Deployment; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan GitHub Actions pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Gunakan npm ci.
+2. Cache package download.
+3. Pisahkan job validasi dan deploy.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```yaml title="github-actions.yaml"
+permissions:
+  contents: read
+# Fragment job setelah checkout dan setup-node:
+# - run: npm ci
+# - run: npm run test:content
+# - run: npm run test:examples
+# - run: npm run build
+# Gunakan protected environment untuk job deployment yang membutuhkan secret.
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run build
+# Atur environment platform, lalu jalankan smoke test setelah deploy.
+```
+
+## Code Explanation
+
+Workflow menjalankan job pada event repository. Tetapkan permissions minimum dan jangan memberikan secret ke kode pull request yang belum dipercaya. Dalam implementasi nyata, cache package download dan pisahkan job validasi dan deploy sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk GitHub Actions, verifikasi langkah “Gunakan npm ci” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Cache package download.
+- Batasi hak akses dan data yang dikirim ke client.
+- Pisahkan job validasi dan deploy.
+
+## Testing
+
+Uji GitHub Actions dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “gunakan npm ci” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Database Migration](/docs/deployment/database-migration)
+- [Deployment overview](/docs/deployment)
+- [Docker Node.js Guide](https://docs.docker.com/guides/nodejs/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [GitHub — Actions Documentation](https://docs.github.com/en/actions)** — Workflow CI/CD dan pengoperasian job repository.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

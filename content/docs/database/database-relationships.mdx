@@ -1,0 +1,111 @@
+---
+title: "Database Relationships"
+description: "Foreign key menjaga hubungan antar record."
+---
+
+## Overview
+
+Foreign key menjaga hubungan antar record. Tentukan perilaku delete secara sengaja karena cascade dapat menghapus data lebih luas dari yang diharapkan.
+
+## Concept
+
+Fokus penerapan **Database Relationships** adalah modelkan one-to-many. Buat join table untuk many-to-many. Tinjau cascade sebelum migration. Contoh berikut memperlihatkan konteks kategori Database; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai PostgreSQL. Jalankan SQL pada database development melalui psql atau SQL editor.
+
+## Project Structure
+
+Simpan latihan Database Relationships pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Modelkan one-to-many.
+2. Buat join table untuk many-to-many.
+3. Tinjau cascade sebelum migration.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```sql title="database-relationships.sql"
+CREATE TABLE user_notes (
+  id uuid PRIMARY KEY,
+  owner_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  title varchar(200) NOT NULL
+);
+CREATE INDEX user_notes_owner_idx ON user_notes(owner_id);
+```
+
+### Konteks kategori
+
+```sql title="schema.sql"
+CREATE TABLE notes (
+  id uuid PRIMARY KEY,
+  owner_id uuid NOT NULL,
+  title varchar(200) NOT NULL CHECK (length(title) > 0),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX notes_owner_created_idx ON notes(owner_id, created_at DESC, id);
+```
+
+## Code Explanation
+
+Foreign key menjaga hubungan antar record. Tentukan perilaku delete secara sengaja karena cascade dapat menghapus data lebih luas dari yang diharapkan. Dalam implementasi nyata, buat join table untuk many-to-many dan tinjau cascade sebelum migration sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Database Relationships, verifikasi langkah “Modelkan one-to-many” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Buat join table untuk many-to-many.
+- Batasi hak akses dan data yang dikirim ke client.
+- Tinjau cascade sebelum migration.
+
+## Testing
+
+Uji Database Relationships dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “modelkan one-to-many” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Prisma ORM](/docs/database/prisma-orm)
+- [Database overview](/docs/database)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/current/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [PostgreSQL — Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)** — Primary key, unique constraint, foreign key, dan integritas data.
+- **Referensi dari [PostgreSQL — Official Documentation](https://www.postgresql.org/docs/current/)** — Model relasional, SQL, dan operasi database.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

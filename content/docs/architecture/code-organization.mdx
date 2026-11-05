@@ -1,0 +1,117 @@
+---
+title: "Code Organization"
+description: "Organisasi per fitur membuat perubahan use case lebih lokal."
+---
+
+## Overview
+
+Organisasi per fitur membuat perubahan use case lebih lokal. Shared code dipisahkan hanya ketika benar-benar digunakan lintas fitur dan memiliki kontrak stabil.
+
+## Concept
+
+Fokus penerapan **Code Organization** adalah kelompokkan berdasarkan fitur. Gunakan barrel dengan hati-hati. Hindari circular imports. Contoh berikut memperlihatkan konteks kategori Architecture & Best Practices; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Code Organization pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Kelompokkan berdasarkan fitur.
+2. Gunakan barrel dengan hati-hati.
+3. Hindari circular imports.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```text title="code-organization.text"
+src/
+  features/
+    auth/
+      auth.routes.mjs
+      auth.service.mjs
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+  infrastructure/
+    database.mjs
+  server.mjs
+```
+
+### Konteks kategori
+
+```js title="notes.service.mjs"
+export function createNoteService(repository) {
+  return {
+    async findForUser(id, actor) {
+      const note = await repository.findById(id);
+      return note?.ownerId === actor.id ? note : null;
+    },
+  };
+}
+```
+
+## Code Explanation
+
+Organisasi per fitur membuat perubahan use case lebih lokal. Shared code dipisahkan hanya ketika benar-benar digunakan lintas fitur dan memiliki kontrak stabil. Dalam implementasi nyata, gunakan barrel dengan hati-hati dan hindari circular imports sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Code Organization, verifikasi langkah “Kelompokkan berdasarkan fitur” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Gunakan barrel dengan hati-hati.
+- Batasi hak akses dan data yang dikirim ke client.
+- Hindari circular imports.
+
+## Testing
+
+Uji Code Organization dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “kelompokkan berdasarkan fitur” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [MVC Architecture](/docs/architecture/mvc-architecture)
+- [Architecture & Best Practices overview](/docs/architecture)
+- [Node.js Learn](https://nodejs.org/en/learn)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Robert C. Martin — The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)** — Aturan dependensi dan pemisahan domain dari infrastruktur.
+- **Referensi dari [Martin Fowler — Repository](https://martinfowler.com/eaaCatalog/repository.html)** — Abstraksi akses persistence dalam bahasa domain.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

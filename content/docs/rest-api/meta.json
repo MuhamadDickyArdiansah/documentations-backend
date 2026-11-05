@@ -1,0 +1,23 @@
+{
+  "title": "REST API",
+  "icon": "Braces",
+  "pages": [
+    "index",
+    "rest-api-fundamentals",
+    "http-methods",
+    "http-status-codes",
+    "endpoint-design",
+    "url-parameters",
+    "query-parameters",
+    "request-body",
+    "api-response-format",
+    "pagination",
+    "filtering",
+    "sorting",
+    "searching",
+    "api-versioning",
+    "rate-limiting",
+    "openapi-swagger"
+  ],
+  "defaultOpen": false
+}

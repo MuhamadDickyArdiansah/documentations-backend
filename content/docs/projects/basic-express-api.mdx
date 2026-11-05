@@ -1,0 +1,134 @@
+---
+title: "Basic Express API"
+description: "Project dasar memperlihatkan pemisahan app dan server, JSON parsing, endpoint resource, serta error handler."
+---
+
+## Overview
+
+Project dasar memperlihatkan pemisahan app dan server, JSON parsing, endpoint resource, serta error handler. Mulai dari kontrak kecil yang dapat diuji tanpa database.
+
+## Concept
+
+Fokus penerapan **Basic Express API** adalah jalankan contoh complete-backend. Coba GET /health. Baca struktur middleware. Contoh berikut memperlihatkan konteks kategori Backend Project References; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Contoh API lokal pada folder examples; jalankan npm ci dari root.
+
+## Installation
+
+Dari root repository, jalankan perintah berikut. Dependensi contoh dikelola bersama lockfile project.
+
+```bash title="terminal"
+npm ci
+npm run examples
+```
+
+## Project Structure
+
+Simpan latihan Basic Express API pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Jalankan contoh complete-backend.
+2. Coba GET /health.
+3. Baca struktur middleware.
+
+### Contoh terfokus
+
+Periksa dependensi dan konteks pada komentar kode. Adapter seperti repository, provider, atau prisma diberikan oleh composition root; fragmen bukan server terpisah. Untuk contoh utuh, lihat [Complete Backend Starter](/docs/projects/complete-backend-starter).
+
+```js title="basic-express-api.mjs"
+import { randomBytes } from 'node:crypto';
+import { createApp } from './app.mjs';
+if (process.env.NODE_ENV === 'production') throw new Error('The in-memory teaching adapter is not suitable for production.');
+const app = await createApp({ secret: process.env.JWT_SECRET || randomBytes(48).toString('base64url') });
+const port = Number(process.env.PORT || 4000);
+const server = app.listen(port, '127.0.0.1', () => console.log(`Learning API: http://localhost:${port} (in-memory; resets on restart)`));
+function shutdown() { server.close(() => process.exit(0)); setTimeout(() => process.exit(1), 10_000).unref(); }
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
+```
+
+### Konteks kategori
+
+```bash title="terminal"
+npm ci
+npm run test:examples
+npm run examples
+# Terminal lain:
+curl -i http://localhost:4000/health
+```
+
+## Code Explanation
+
+Project dasar memperlihatkan pemisahan app dan server, JSON parsing, endpoint resource, serta error handler. Mulai dari kontrak kecil yang dapat diuji tanpa database. Dalam implementasi nyata, coba get /health dan baca struktur middleware sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Contoh API lokal menggunakan resource notes. Endpoint mutasi membutuhkan bearer access token hasil login.
+
+| Method | Endpoint | Authentication | Hasil |
+| --- | --- | --- | --- |
+| GET | /health | Tidak | 200, status proses |
+| POST | /api/auth/login | Tidak | 200, pasangan token |
+| GET | /api/notes | Bearer token | 200, daftar milik actor |
+| POST | /api/notes | Bearer token | 201, note baru |
+
+```json title="POST /api/notes — request"
+{"title":"Belajar backend"}
+```
+
+```json title="201 — response shape"
+{"data":{"id":"<note-id>","ownerId":"<user-id>","title":"Belajar backend"}}
+```
+
+Kirim header Content-Type: application/json. Token dan ID pada response merupakan placeholder; gunakan nilai dari server lokal. Lihat [Complete Backend Starter](/docs/projects/complete-backend-starter) untuk alur lengkap.
+
+## Error Handling
+
+Gunakan 401 untuk credential tidak valid, 404 untuk record yang tidak tersedia dalam scope actor, 409 untuk konflik, dan 422 untuk body yang tidak memenuhi schema. Response error berbentuk object error dengan code dan message. Untuk Basic Express API, verifikasi langkah “Jalankan contoh complete-backend” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Coba GET /health.
+- Batasi hak akses dan data yang dikirim ke client.
+- Baca struktur middleware.
+
+## Testing
+
+Uji Basic Express API dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “jalankan contoh complete-backend” sesuai kontrak. Tambahkan test tanpa token dan test akses lintas user.
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Authentication API](/docs/projects/authentication-api)
+- [Backend Project References overview](/docs/projects)
+- [Express Documentation](https://expressjs.com/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [Express — Routing Guide](https://expressjs.com/en/guide/routing/)** — Route, router, dan pemetaan endpoint HTTP.
+- **Referensi dari [Express — API Reference](https://expressjs.com/en/api/)** — Kontrak API aplikasi, request, response, dan router.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

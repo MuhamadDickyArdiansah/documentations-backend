@@ -1,0 +1,109 @@
+---
+title: "Audit Logging"
+description: "Audit log menjelaskan siapa melakukan apa terhadap resource dan kapan."
+---
+
+## Overview
+
+Audit log menjelaskan siapa melakukan apa terhadap resource dan kapan. Log audit perlu retention, kontrol akses, serta perlindungan dari perubahan atau penghapusan.
+
+## Concept
+
+Fokus penerapan **Audit Logging** adalah catat actor dan action. Jangan simpan secret. Gunakan storage append-only bila dibutuhkan. Contoh berikut memperlihatkan konteks kategori Advanced Backend; sesuaikan dengan kontrak dan batas resource aplikasi.
+
+## Prerequisites
+
+- Node.js LTS yang masih didukung, npm, dan terminal.
+- Materi [Getting Started](/docs/getting-started) dan dasar async/await.
+- Folder latihan terpisah agar perubahan tidak memengaruhi data production.
+
+## Installation
+
+Contoh kategori ini memakai Node.js atau tools yang disebut pada contoh. Untuk berkas .mjs, jalankan node diikuti nama file.
+
+## Project Structure
+
+Simpan latihan Audit Logging pada module fitur terkait. Pisahkan transport HTTP, aturan bisnis, dan akses data agar dapat diuji secara mandiri.
+
+```text title="struktur referensi"
+src/
+  features/
+    notes/
+      notes.routes.mjs
+      notes.service.mjs
+      notes.repository.mjs
+  app.mjs
+  server.mjs
+```
+
+## Implementation
+
+1. Catat actor dan action.
+2. Jangan simpan secret.
+3. Gunakan storage append-only bila dibutuhkan.
+
+### Contoh terfokus
+
+Cuplikan ini berfokus pada konsep di atas. Untuk fragmen middleware, daftarkan pada aplikasi Express setelah dependensi yang dibutuhkan; contoh aplikasi lengkap tersedia pada Project References.
+
+```js title="audit-logging.mjs"
+export function audit({ actorId, action, resourceId }) {
+  console.log(JSON.stringify({
+    at: new Date().toISOString(), actorId, action, resourceId,
+  }));
+}
+// Production: salurkan ke storage dengan retention dan akses terbatas.
+```
+
+### Konteks kategori
+
+```js title="fetch.mjs"
+export async function readJSON(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Provider returned ${response.status}`);
+  return response.json();
+}
+// Gunakan URL dari konfigurasi server, bukan URL bebas dari user.
+```
+
+## Code Explanation
+
+Audit log menjelaskan siapa melakukan apa terhadap resource dan kapan. Log audit perlu retention, kontrol akses, serta perlindungan dari perubahan atau penghapusan. Dalam implementasi nyata, jangan simpan secret dan gunakan storage append-only bila dibutuhkan sebelum meneruskan hasil ke bagian aplikasi berikutnya.
+
+## API Examples
+
+Topik ini merupakan konsep internal, sehingga tidak mendefinisikan endpoint tersendiri. Gunakan [Basic Express API](/docs/projects/basic-express-api) untuk mempelajari cara menerapkannya pada request HTTP.
+
+## Error Handling
+
+Buat kegagalan terlihat pada batas module. Tangani input salah secara eksplisit dan pertahankan informasi penyebab pada log internal. Untuk Audit Logging, verifikasi langkah “Catat actor dan action” ketika hasil tidak sesuai harapan. Jangan mengembalikan secret atau stack trace ke client.
+
+## Security & Best Practices
+
+<Callout type="info" title="Batas implementasi">Contoh ringkas memperlihatkan konsep dan perlu disesuaikan dengan validasi, authorization, serta observability aplikasi.</Callout>
+
+- Jangan simpan secret.
+- Batasi hak akses dan data yang dikirim ke client.
+- Gunakan storage append-only bila dibutuhkan.
+
+## Testing
+
+Uji Audit Logging dengan input valid, input kosong, dan kegagalan dependensi. Pastikan perilaku “catat actor dan action” sesuai kontrak. 
+
+```bash title="verifikasi contoh utama"
+npm run test:examples
+```
+
+## Related Topics
+
+- [Idempotency](/docs/advanced/idempotency)
+- [Advanced Backend overview](/docs/advanced)
+- [Node.js API](https://nodejs.org/api/)
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [OWASP — Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)** — Audit event, redaction, dan perlindungan log.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.

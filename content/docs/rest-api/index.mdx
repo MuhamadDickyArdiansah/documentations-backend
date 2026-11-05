@@ -1,0 +1,44 @@
+---
+title: "REST API"
+description: "Pelajari REST API melalui 15 topik yang terstruktur, dari konsep hingga praktik."
+icon: Braces
+---
+
+## Tentang kategori ini
+
+REST memodelkan resource yang diidentifikasi URL. Gunakan HTTP method sesuai semantiknya dan hindari menyimpan konteks percakapan tersembunyi pada server.
+
+## Urutan belajar
+
+Baca topik berikut sesuai urutan, atau pilih materi yang dibutuhkan sebagai referensi.
+
+<Cards>
+<Card title="REST API Fundamentals" href="/docs/rest-api/rest-api-fundamentals">REST memodelkan resource yang diidentifikasi URL.</Card>
+<Card title="HTTP Methods" href="/docs/rest-api/http-methods">GET membaca, POST membuat atau memicu proses, PUT mengganti representasi, PATCH mengubah sebagian, dan DELETE menghapus.</Card>
+<Card title="HTTP Status Codes" href="/docs/rest-api/http-status-codes">Status code mengomunikasikan hasil tanpa harus membaca pesan.</Card>
+<Card title="Endpoint Design" href="/docs/rest-api/endpoint-design">URL sebaiknya menamai resource dan hubungan, bukan detail database.</Card>
+<Card title="URL Parameters" href="/docs/rest-api/url-parameters">Parameter URL adalah string dan tidak otomatis aman sebagai ID.</Card>
+<Card title="Query Parameters" href="/docs/rest-api/query-parameters">Query mengatur representasi hasil, seperti page, limit, dan filter.</Card>
+<Card title="Request Body" href="/docs/rest-api/request-body">Content-Type menentukan cara membaca body.</Card>
+<Card title="API Response Format" href="/docs/rest-api/api-response-format">Envelope membantu client membedakan data dan error.</Card>
+<Card title="Pagination" href="/docs/rest-api/pagination">Offset pagination sederhana tetapi biaya query meningkat pada offset besar.</Card>
+<Card title="Filtering" href="/docs/rest-api/filtering">Filter menerjemahkan parameter yang diizinkan menjadi kondisi query.</Card>
+<Card title="Sorting" href="/docs/rest-api/sorting">Sort menentukan urutan hasil dan perlu tie-breaker agar pagination stabil.</Card>
+<Card title="Searching" href="/docs/rest-api/searching">Pencarian substring cukup untuk data kecil; full-text index lebih cocok untuk skala besar.</Card>
+<Card title="API Versioning" href="/docs/rest-api/api-versioning">Versi API memisahkan perubahan kontrak yang tidak kompatibel.</Card>
+<Card title="Rate Limiting" href="/docs/rest-api/rate-limiting">Rate limit membatasi penggunaan resource per identitas atau IP.</Card>
+<Card title="OpenAPI / Swagger" href="/docs/rest-api/openapi-swagger">OpenAPI adalah kontrak endpoint yang dapat dibaca mesin.</Card>
+</Cards>
+
+## Praktik
+
+Jalankan contoh lokal dengan `npm run examples` dari root repository. Untuk pemeriksaan perilaku authentication dan CRUD, gunakan `npm run test:examples`.
+
+## Referensi
+
+Sumber konsep dan bacaan lanjutan untuk materi ini:
+
+- **Referensi dari [IETF — RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110)** — Semantik method, status code, header, dan representasi.
+- **Referensi dari [Microsoft — REST API Guidelines](https://github.com/microsoft/api-guidelines)** — Desain resource, daftar hasil, filtering, dan kontrak API.
+
+Penjelasan dan contoh kode pada handbook ditulis sebagai materi pembelajaran mandiri; bukan salinan resmi dari sumber tersebut. Cocokkan versi API pada referensi dengan versi dependensi contoh.
